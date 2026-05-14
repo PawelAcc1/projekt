@@ -52,6 +52,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 projekt_stm32.list \
 
+OBJCOPY_BIN += \
+projekt_stm32.bin \
+
 
 # All Target
 all: main-build
@@ -60,8 +63,8 @@ all: main-build
 main-build: projekt_stm32.elf secondary-outputs
 
 # Tool invocations
-projekt_stm32.elf projekt_stm32.map: $(OBJS) $(USER_OBJS) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_stm32\projekt_stm32\STM32F411RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "projekt_stm32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_stm32\projekt_stm32\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="projekt_stm32.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+projekt_stm32.elf projekt_stm32.map: $(OBJS) $(USER_OBJS) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_stm32\STM32F411RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "projekt_stm32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_stm32\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="projekt_stm32.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -75,12 +78,17 @@ projekt_stm32.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+projekt_stm32.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "projekt_stm32.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) default.size.stdout projekt_stm32.elf projekt_stm32.list projekt_stm32.map
+	-$(RM) default.size.stdout projekt_stm32.bin projekt_stm32.elf projekt_stm32.list projekt_stm32.map
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

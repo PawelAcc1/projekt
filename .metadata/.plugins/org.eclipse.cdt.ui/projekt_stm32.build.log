@@ -1,0 +1,19 @@
+17:01:31 **** Incremental Build of configuration Debug for project projekt_stm32 ****
+make -j12 all 
+arm-none-eabi-gcc -o "projekt_stm32.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_stm32\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="projekt_stm32.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: projekt_stm32.elf
+ 
+arm-none-eabi-size  projekt_stm32.elf 
+arm-none-eabi-objdump -h -S projekt_stm32.elf  > "projekt_stm32.list"
+arm-none-eabi-objcopy  -O binary projekt_stm32.elf  "projekt_stm32.bin"
+   text	   data	    bss	    dec	    hex	filename
+  19664	     92	   2236	  21992	   55e8	projekt_stm32.elf
+Finished building: default.size.stdout
+ 
+Finished building: projekt_stm32.bin
+ 
+Finished building: projekt_stm32.list
+ 
+
+17:01:32 Build Finished. 0 errors, 0 warnings. (took 974ms)
+
