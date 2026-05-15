@@ -1,9 +1,9 @@
 interface vga_if; 
 
-    logic [10:0] vcount;
+    logic [11:0] vcount;
     logic vsync;
     logic vblnk;
-    logic [10:0] hcount;
+    logic [11:0] hcount;
     logic hsync;
     logic hblnk;
     logic [11:0] rgb;
