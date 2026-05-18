@@ -9,7 +9,7 @@ from math import pi
 
 fs = 500.0  # Częstotliwość próbkowania w Hz
 nyq = 0.5 * fs  # Częstotliwość Nyquista
-f_cutoff = 150 # Częstotliwość maksymalna do analizy ekg
+f_cutoff = 40 # Częstotliwość do obrazowania ekg
 
 num_taps = 101 # liczba odprowadzeń
 

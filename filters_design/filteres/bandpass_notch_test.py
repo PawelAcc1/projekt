@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # ==========================================
 fs = 500.0  
 numtaps = 501 
-f_cutoff = [0.5, 48.0, 52.0, 150.0] 
+f_cutoff = [1, 48.0, 52.0, 150.0] 
 
 # Generujemy współczynniki naszego filtru
 b_fir = signal.firwin(numtaps, f_cutoff, fs=fs, window='hamming', pass_zero=False)
