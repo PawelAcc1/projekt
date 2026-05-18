@@ -23,8 +23,11 @@ function automatic logic [11:0] draw_ecg (
 );
 
 localparam [11:0] signal_colour = 12'hf_0_0;
+localparam [2:0] line_width = 3'd2;
 
-if(vcount == (12'd768 - prescaled_ecg_data)) begin //y axis is upside down (negative)
+logic [11:0] mapped_y = 12'd768 - prescaled_ecg_data; //y axis is upside down (negative)
+
+if((vcount >= (mapped_y - line_width)) && (vcount <= (mapped_y + line_width))) begin
     return signal_colour;
 end
 else begin
@@ -41,7 +44,7 @@ logic [11:0] vcount_buffer;
 logic [11:0] hcount_buffer;
 logic [11:0] rgb_buffer;
 
-//pipeline 
+//2 stage pipeline | 2 clock cycles delay
 always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
         hblnk_buffer <= '0; vblnk_buffer <= '0;
@@ -64,7 +67,6 @@ always_ff @(posedge clk or negedge rst_n) begin
         vga_out.hsync <= hsync_buffer; vga_out.vsync <= vsync_buffer;
         vga_out.vcount <= vcount_buffer; vga_out.hcount <= hcount_buffer;
         vga_out.rgb <= draw_ecg(prescaled_ecg_data, rgb_buffer, vcount_buffer); //rendering
-        
     end
 end
 
