@@ -40,4 +40,16 @@ module top_vga (
         .vga_out  (if_rect.out)
     );
 
+/*
+ * FIR BANDPASS FILTER INSTANCE FROM IP CATALOG
+*/
+fir_compiler_0 u_fir_compiler_0 (
+  .aclk(aclk),                              // input wire aclk
+  .s_axis_data_tvalid(s_axis_data_tvalid),  // input wire s_axis_data_tvalid
+  .s_axis_data_tready(s_axis_data_tready),  // output wire s_axis_data_tready
+  .s_axis_data_tdata(s_axis_data_tdata),    // input wire [15 : 0] s_axis_data_tdata
+  .m_axis_data_tvalid(m_axis_data_tvalid),  // output wire m_axis_data_tvalid
+  .m_axis_data_tdata(m_axis_data_tdata)    // output wire [39 : 0] m_axis_data_tdata
+);
+
 endmodule
