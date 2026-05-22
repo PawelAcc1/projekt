@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 
 fs = 500.0  # Częstotliwość próbkowania w Hz
 nyq = 0.5 * fs  # Częstotliwość Nyquista
-numtaps = 301 # liczba odprowadzeń 
-f_cutoff = [0.5, 150] # pasmo
+numtaps = 601 # liczba odprowadzeń 
+f_cutoff = [0.5, 40] # pasmo
 
 # ==========================================
 # 2. PROJEKTOWANIE FILTRÓW

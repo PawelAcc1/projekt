@@ -9,22 +9,21 @@
 
 package vga_pkg;
 
-    // Parameters for VGA Display 800 x 600 @ 60fps using a 40 MHz clock;
-    localparam HOR_PIXELS = 800;
-    localparam VER_PIXELS = 600;
+    // Parameters for VGA Display 1024 x 768 @ 60fps using a 65 MHz clock;
+    localparam HOR_PIXELS = 1024;
+    localparam VER_PIXELS = 768;
 
     // Add VGA timing parameters here and refer to them in other modules.
-    localparam HOR_TOTAL_TIME  = 1056;
-    localparam HOR_BLANK_START = 800;
-    localparam HOR_BLANK_TIME  = 256;
-    localparam HOR_SYNC_START  = 840;
-    localparam HOR_SYNC_TIME   = 128;
+    localparam HOR_TOTAL_TIME  = 1344; // 1024 (Active) + 24 (FP) + 136 (Sync) + 160 (BP)
+    localparam HOR_BLANK_START = 1024;
+    localparam HOR_BLANK_TIME  = 320;  // HOR_TOTAL_TIME - HOR_PIXELS
+    localparam HOR_SYNC_START  = 1048; // HOR_PIXELS + Front Porch (24)
+    localparam HOR_SYNC_TIME   = 136;  // Sync pulse width
 
-    localparam VER_TOTAL_TIME  = 628;
-    localparam VER_BLANK_START = 600;
-    localparam VER_BLANK_TIME  = 28;
-    localparam VER_SYNC_START  = 601;
-    localparam VER_SYNC_TIME   = 4;
-
+    localparam VER_TOTAL_TIME  = 806;  // 768 (Active) + 3 (FP) + 6 (Sync) + 29 (BP)
+    localparam VER_BLANK_START = 768;
+    localparam VER_BLANK_TIME  = 38;   // VER_TOTAL_TIME - VER_PIXELS
+    localparam VER_SYNC_START  = 771;  // VER_PIXELS + Front Porch (3)
+    localparam VER_SYNC_TIME   = 6;    // Sync pulse width
 
 endpackage
