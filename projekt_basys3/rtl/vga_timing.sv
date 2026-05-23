@@ -9,10 +9,10 @@ module vga_timing (
 
     import vga_pkg::*;
     
-    logic [10:0] vcount, hcount;
+    logic [11:0] vcount, hcount;
     logic vsync, vblnk, hsync, hblnk;
 
-    logic [10:0] vcount_nxt, hcount_nxt;
+    logic [11:0] vcount_nxt, hcount_nxt;
     logic vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
 
     assign vga_out.vcount = vcount;

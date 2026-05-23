@@ -27,7 +27,10 @@ localparam [2:0] line_width = 3'd2;
 
 logic [11:0] mapped_y = 12'd768 - prescaled_ecg_data; //y axis is upside down (negative)
 
-if((vcount >= (mapped_y - line_width)) && (vcount <= (mapped_y + line_width))) begin
+logic width_overflow = (mapped_y > line_width) ? 1'b1 : 1'b0; //overflow check
+
+if((width_overflow & (vcount >= (mapped_y - line_width)) && (vcount <= (mapped_y + line_width)))
+    | !(width_overflow) & (vcount == mapped_y)) begin
     return signal_colour;
 end
 else begin
