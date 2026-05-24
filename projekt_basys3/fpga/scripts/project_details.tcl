@@ -13,10 +13,10 @@
 #                   Project details                   #
 #-----------------------------------------------------#
 # Project name                                  -- EDIT
-set project_name vga_project
+set project_name ecg_project
 
 # Top module name                               -- EDIT
-set top_module top_vga_basys3
+set top_module top_ecg_basys3
 
 # FPGA device
 set target xc7a35tcpg236-1
@@ -26,24 +26,28 @@ set target xc7a35tcpg236-1
 #-----------------------------------------------------#
 # Specify .xdc files location                   -- EDIT
 set xdc_files {
-    constraints/top_vga_basys3.xdc
+    constraints/top_ecg_basys3.xdc
 }
 
 # Specify SystemVerilog design files location   -- EDIT
 set sv_files {
     ../rtl/vga_pkg.sv
     ../rtl/vga_timing.sv
-    ../rtl/draw_bg.sv
-    ../rtl/draw_rect.sv
-    ../rtl/top_vga.sv
+    ../rtl/draw_grid.sv
+    ../rtl/top_ecg.sv
+    ../rtl/sampling_timer.sv
+    ../rtl/i2c_master.sv
+    ../rtl/ring_buffer.sv
+    ../rtl/render_signal.sv
     ../rtl/vga_if.sv
-    rtl/top_vga_basys3.sv
+    rtl/top_ecg_basys3.sv
 }
 
 # Specify Verilog design files location         -- EDIT
-# set verilog_files {
-#     path/to/file.v
-# }
+set verilog_files {
+    ../rtl/clk_wiz_0.v
+    ../rtl/clk_wiz_0_clk_wiz.v
+}
 
 # Specify VHDL design files location            -- EDIT
 # set vhdl_files {
