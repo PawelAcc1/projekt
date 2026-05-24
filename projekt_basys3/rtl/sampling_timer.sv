@@ -7,7 +7,7 @@
 
 module sampling_timer #(
     parameter CLK_FREQ = 100_000_000, // Częstotliwość głównego zegara (100 MHz)
-    parameter SAMPLING_RATE = 1000    // Żądana częstotliwość pobierania próbek EKG (1 kHz)
+    parameter SAMPLING_RATE = 500    // Żądana częstotliwość pobierania próbek EKG (500 Hz)
 )(
     input wire clk,           // Wejście: Główny sygnał zegarowy (100 MHz)
     input wire rst_n,         // Asynchroniczny reset aktywny nisko
