@@ -22,6 +22,7 @@ proc create_new_project {project_name target top_module} {
     if {[info exists ::verilog_files]} {read_verilog ${::verilog_files}}
     if {[info exists ::vhdl_files]}    {read_vhdl ${::vhdl_files}}
     if {[info exists ::mem_files]}     {read_mem ${::mem_files}}
+    if {[info exists ::ip_core_files]}      {read_ip ${::ip_core_files}}
 
     set_property top ${top_module} [current_fileset]
     update_compile_order -fileset sources_1

@@ -12,16 +12,16 @@
  * Top level synthesizable module including the project top and all the FPGA-referred modules.
  */
 
-module top_vga_basys3 (
+module top_ecg_basys3 (
         input  wire clk,
         input  wire btnC,
-        inout wire [2:1] JA,
+        inout wire [3:2] JA,
         output wire Vsync,
         output wire Hsync,
         output wire [3:0] vgaRed,
         output wire [3:0] vgaGreen,
         output wire [3:0] vgaBlue,
-        output wire JA1,
+        output wire JA1
     );
 
     timeunit 1ns;
@@ -73,7 +73,7 @@ module top_vga_basys3 (
         .clk_100MHz(clk_100MHz),
         .clk_65MHz(clk_65MHz),
         .rst_n(!btnC & locked),
-        .i2c_sda(JA[1]),
+        .i2c_sda(JA[3]),
         .i2c_scl(JA[2]),
         .vs(Vsync),
         .hs(Hsync),
