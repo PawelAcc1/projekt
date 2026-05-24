@@ -37,7 +37,7 @@ bandpass_coeffs_fpga = np.round(bandpass_coeffs * skala_fpga).astype(int)
 # 4. ZAPIS WSPÓŁCZYNNIKÓW DO PLIKU .COE
 # ==========================================
 #lokalizacja pliku ze wspolczynnikami
-file_path = r"C:\Users\pbuko\Desktop\SystemVerilog\projekt\filters_design\filter_coefficients" # r - raw string - python ignoruje znaki specjalne
+file_path = r"C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fir_compiler_0_1" # r - raw string - python ignoruje znaki specjalne
 file_name = "bandpass_coeffs.coe"
 full_path = os.path.join(file_path, file_name) # concatenation of file path and file name
 
