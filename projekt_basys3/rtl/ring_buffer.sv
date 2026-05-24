@@ -2,7 +2,8 @@ module ring_buffer #(
     parameter WIDTH = 12,
     parameter ADDR = 10
 )(
-    input logic clk,
+    input logic clk_read,
+    input logic clk_write,
     input logic rst_n,
     input logic write_enable,
     input logic [WIDTH-1:0] ecg_data_write,
@@ -27,7 +28,7 @@ initial begin
 end
 
 //internal write address counter
-always_ff @(posedge clk or negedge rst_n) begin
+always_ff @(posedge clk_write or negedge rst_n) begin
     if(!rst_n) begin
         write_address <= '0;
     end
@@ -41,12 +42,14 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
 end
 
-//memory read and write
-always_ff @(posedge clk) begin
-    if(write_enable) begin
-        memory[write_address] <= ecg_data_write;
-    end
-
+//memory read
+always_ff @(posedge clk_read) begin
     ecg_data_read <= memory[read_address];
 end
+
+//memory write
+always_ff @(posedge clk_write) begin
+    memory[write_address] <= ecg_data_write;
+end
+
 endmodule
