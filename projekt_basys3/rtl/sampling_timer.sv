@@ -10,7 +10,7 @@ module sampling_timer #(
     parameter SAMPLING_RATE = 1000    // Żądana częstotliwość pobierania próbek EKG (1 kHz)
 )(
     input wire clk,           // Wejście: Główny sygnał zegarowy (100 MHz)
-    input wire rst_n,         // Asynchroniczny reset aktywny nisko
+    input wire rst_n,         // Wejście: Aktywny niski reset
     output logic start_sampling // Wyjście: Impuls wyzwalający maszynę stanów I2C
 );
 
