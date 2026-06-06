@@ -54,6 +54,7 @@ set verilog_files {
 # Specify IP Core files location
 set ip_core_files {
     ../fir_compiler_0_1/fir_compiler_0.xci
+    ../fir_compiler_notch/fir_compiler_notch.xci
 }
 
 # Specify VHDL design files location            -- EDIT

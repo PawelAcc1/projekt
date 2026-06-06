@@ -15,7 +15,7 @@
 module top_ecg_basys3 (
         input  wire clk,
         input  wire btnC,
-        inout wire [3:2] JA,
+        inout wire [7:2] JA,
         output wire Vsync,
         output wire Hsync,
         output wire [3:0] vgaRed,
@@ -41,6 +41,11 @@ module top_ecg_basys3 (
      */
 
     assign JA1 = pclk_mirror;
+
+    assign JA[4] = 1'bz;
+    assign JA[5] = 1'bz;
+    assign JA[6] = 1'bz;
+    assign JA[7] = 1'bz;
 
     // Mirror pclk on a pin for use by the testbench;
     // not functionally required for this design to work.

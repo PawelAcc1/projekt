@@ -20,7 +20,9 @@ module top_ecg (
     wire start_sampling;
     wire data_ready;
     wire data_write_enable;
-    wire [15:0] filtered_data;
+    wire data_filtered_0;
+    wire [15:0] filtered_data_0; //after bandpass fir filter
+    wire [15:0] filtered_data_1; //after notch fir filter
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
     wire [15:0] ecg_data_received;
@@ -69,12 +71,25 @@ module top_ecg (
      * FIR BANDPASS FILTER INSTANCE FROM IP CATALOG
     */
     fir_compiler_0 u_fir_compiler_0 (
-    .aclk(clk_100MHz),                              // input wire clk
-    .s_axis_data_tvalid(data_ready),  // input wire s_axis_data_tvalid
-    .s_axis_data_tready(),  // output wire s_axis_data_tready
-    .s_axis_data_tdata(ecg_data_received),    // input wire [15 : 0] s_axis_data_tdata
-    .m_axis_data_tvalid(data_write_enable),  // output wire m_axis_data_tvalid
-    .m_axis_data_tdata(filtered_data)    // output wire [15 : 0] m_axis_data_tdata
+        .aclk(clk_100MHz),                              // input wire clk
+        .s_axis_data_tvalid(data_ready),  // input wire s_axis_data_tvalid
+        .s_axis_data_tready(),  // output wire s_axis_data_tready
+        .s_axis_data_tdata(ecg_data_received),    // input wire [15 : 0] s_axis_data_tdata
+        .m_axis_data_tvalid(data_filtered_0),  // output wire m_axis_data_tvalid
+        .m_axis_data_tdata(filtered_data_0)    // output wire [15 : 0] m_axis_data_tdata
+    );
+
+    /*
+     * FIR NOTCH FILTER INSTANCE FROM IP CATALOG
+    */
+    fir_compiler_notch your_instance_name (
+        .aclk(clk_100MHz),                              // input wire aclk
+        .s_axis_data_tvalid(data_filtered_0),  // input wire s_axis_data_tvalid
+        .s_axis_data_tready(),  // output wire s_axis_data_tready
+        .s_axis_data_tdata(filtered_data_0),    // input wire [15 : 0] s_axis_data_tdata
+        .m_axis_data_tvalid(data_write_enable),  // output wire m_axis_data_tvalid
+        .m_axis_data_tready(1'b1),  // input wire m_axis_data_tready
+        .m_axis_data_tdata(filtered_data_1)    // output wire [15 : 0] m_axis_data_tdata
     );
 
     ring_buffer u_ring_buffer (
@@ -82,7 +97,7 @@ module top_ecg (
         .clk_write(clk_100MHz),
         .rst_n(rst_n),
         .write_enable(data_write_enable),
-        .ecg_data_write(filtered_data[15:4]),
+        .ecg_data_write(filtered_data_1[15:4]),
         .read_address(read_address),
         .ecg_data_read(ecg_data_read)
     );
