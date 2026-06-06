@@ -20,8 +20,7 @@ module top_ecg_basys3 (
         output wire Hsync,
         output wire [3:0] vgaRed,
         output wire [3:0] vgaGreen,
-        output wire [3:0] vgaBlue,
-        output wire JA1
+        output wire [3:0] vgaBlue
     );
 
     timeunit 1ns;
@@ -34,31 +33,14 @@ module top_ecg_basys3 (
     wire locked;
     wire clk_100MHz;
     wire clk_65MHz;
-    wire pclk_mirror;
     
     /**
      * Signals assignments
      */
-
-    assign JA1 = pclk_mirror;
-
     assign JA[4] = 1'bz;
     assign JA[5] = 1'bz;
     assign JA[6] = 1'bz;
     assign JA[7] = 1'bz;
-
-    // Mirror pclk on a pin for use by the testbench;
-    // not functionally required for this design to work.
-
-    ODDR pclk_oddr (
-        .Q(pclk_mirror),
-        .C(clk_100MHz),
-        .CE(1'b1),
-        .D1(1'b1),
-        .D2(1'b0),
-        .R(1'b0),
-        .S(1'b0)
-    );
 
     /*
      * CLOCK IP CORE

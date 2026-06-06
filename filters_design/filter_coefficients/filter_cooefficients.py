@@ -22,7 +22,7 @@ bandpass_coeffs = signal.firwin(
     numtaps=num_taps,
     cutoff=f_cutoff,
     fs=fs,
-    window='blackmanharris',
+    window='hamming',
     pass_zero='bandstop'
 )
 
