@@ -23,6 +23,7 @@ module top_ecg (
     wire data_filtered_0;
     wire [15:0] filtered_data_0; //after bandpass fir filter
     wire [15:0] filtered_data_1; //after notch fir filter
+    wire [11:0] display_data; 
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
     wire [15:0] ecg_data_received;
@@ -88,8 +89,24 @@ module top_ecg (
         .s_axis_data_tready(),  // output wire s_axis_data_tready
         .s_axis_data_tdata(filtered_data_0),    // input wire [15 : 0] s_axis_data_tdata
         .m_axis_data_tvalid(data_write_enable),  // output wire m_axis_data_tvalid
-        .m_axis_data_tready(1'b1),  // input wire m_axis_data_tready
         .m_axis_data_tdata(filtered_data_1)    // output wire [15 : 0] m_axis_data_tdata
+    );
+
+        /*
+     * SIGNAL CONDITIONING: signed FIR sample -> unsigned, mid-scale centered,
+     * amplified and saturated value ready for the ring buffer / VGA rendering.
+     */
+    signal_conditioner #(
+        .IN_WIDTH    (16),
+        .OUT_WIDTH   (12),
+        .GAIN_LSHIFT (3),
+        .DC_SHIFT    (9)
+    ) u_signal_conditioner (
+        .clk          (clk_100MHz),
+        .rst_n        (rst_n),
+        .sample_valid (data_write_enable),
+        .data_in      (filtered_data_1),
+        .data_out     (display_data)
     );
 
     ring_buffer u_ring_buffer (
@@ -97,7 +114,7 @@ module top_ecg (
         .clk_write(clk_100MHz),
         .rst_n(rst_n),
         .write_enable(data_write_enable),
-        .ecg_data_write(filtered_data_1[15:4]),
+        .ecg_data_write(display_data),
         .read_address(read_address),
         .ecg_data_read(ecg_data_read)
     );
