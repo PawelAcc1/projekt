@@ -40,7 +40,8 @@ set sv_files {
     ../rtl/sampling_timer.sv
     ../rtl/i2c_master.sv
     ../rtl/ring_buffer.sv
-    ../rtl/signal_conditioner.sv
+    ../rtl/baseline_restore.sv
+    ../rtl/vga_formatter.sv
     ../rtl/render_signal.sv
     ../rtl/vga_if.sv
     rtl/top_ecg_basys3.sv
