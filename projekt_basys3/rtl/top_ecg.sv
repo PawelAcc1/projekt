@@ -20,9 +20,12 @@ module top_ecg (
     wire start_sampling;
     wire data_ready;
     wire data_write_enable;
+    wire data_ready_notch;
+    wire data_ready_baseline;
     wire data_filtered_0;
     wire [15:0] filtered_data_0; //after bandpass fir filter
     wire [15:0] filtered_data_1; //after notch fir filter
+    wire [15:0] data_baseline;
     wire [11:0] display_data; 
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
@@ -83,30 +86,37 @@ module top_ecg (
     /*
      * FIR NOTCH FILTER INSTANCE FROM IP CATALOG
     */
-    fir_compiler_notch your_instance_name (
+    fir_compiler_notch u_fir_compiler_notch (
         .aclk(clk_100MHz),                              // input wire aclk
         .s_axis_data_tvalid(data_filtered_0),  // input wire s_axis_data_tvalid
         .s_axis_data_tready(),  // output wire s_axis_data_tready
         .s_axis_data_tdata(filtered_data_0),    // input wire [15 : 0] s_axis_data_tdata
-        .m_axis_data_tvalid(data_write_enable),  // output wire m_axis_data_tvalid
+        .m_axis_data_tvalid(data_ready_notch),  // output wire m_axis_data_tvalid
         .m_axis_data_tdata(filtered_data_1)    // output wire [15 : 0] m_axis_data_tdata
     );
 
-        /*
-     * SIGNAL CONDITIONING: signed FIR sample -> unsigned, mid-scale centered,
-     * amplified and saturated value ready for the ring buffer / VGA rendering.
-     */
-    signal_conditioner #(
-        .IN_WIDTH    (16),
-        .OUT_WIDTH   (12),
-        .GAIN_LSHIFT (3),
-        .DC_SHIFT    (9)
-    ) u_signal_conditioner (
-        .clk          (clk_100MHz),
-        .rst_n        (rst_n),
-        .sample_valid (data_write_enable),
-        .data_in      (filtered_data_1),
-        .data_out     (display_data)
+    /*
+     * BASELINE RESTORE: ADJUST BASELINE LEVEL TO COMPENASTE OFFSET WANDERING
+    */
+    baseline_restore u_baseline_restore (
+        .clk(clk_100MHz),
+        .rst_n(rst_n),
+        .sample_valid_in(data_ready_notch),
+        .data_in(filtered_data_1),
+        .data_out(data_baseline),
+        .sample_valid_out(data_ready_baseline)
+    );
+
+    /*
+     * VGA FORMAT: PREPARE SIGNAL FOR DISPLAY ON VGA
+    */
+    vga_formatter u_vga_formatter (
+        .clk(clk_100MHz),
+        .rst_n(rst_n),
+        .sample_valid_in(data_ready_baseline),
+        .data_in(data_baseline),
+        .data_out(display_data),
+        .data_ready(data_write_enable)
     );
 
     ring_buffer u_ring_buffer (
