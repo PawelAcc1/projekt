@@ -1,0 +1,316 @@
+*** Start analyzing build configuration ***
+INFO: Auto-config - Scanning: C:\Users\pbuko\Desktop\SystemVerilog\projekt
+INFO: Auto-config - VLOG: C:\Users\pbuko\Desktop\SystemVerilog\projekt
+INFO: Auto-config - Wrote:
+    .dvt\default.build.auto.1
+*** List of included argument files ***
+    Build configuration file:  C:\Users\pbuko\Desktop\SystemVerilog\projekt\.dvt\default.build
+    -f c:\Users\pbuko\Desktop\SystemVerilog\projekt\.dvt\default.build.auto.1
+*** List of invocations ***
+Invocation #1 +dvt_init+dvt in c:\Users\pbuko\Desktop\SystemVerilog\projekt\.dvt\default.build.auto.1 at line 9
+*** Done analyzing build configuration [738 ms] ***
+
+*** Start SystemVerilog build ***
+*** Invocation #1***
+*** IMPLICIT INVOCATION - NOTHING TO COMPILE
+*** Done parsing invocation #1
+*** Invocation #2***
+Loading (1) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v [12 ms, 30 lines, Verilog_2001] ...
+Loading (2) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v [17 ms, 30 lines, Verilog_2001] ...
+Loading (3) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v [5 ms, 31 lines, Verilog_2001] ...
+Loading (4) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.ip_user_files\ip\fir_compiler_notch\fir_compiler_notch_stub.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.ip_user_files\ip\fir_compiler_notch\fir_compiler_notch_stub.v [4 ms, 30 lines, Verilog_2001] ...
+Loading (5) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\rtl\top_ecg_basys3.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\rtl\top_ecg_basys3.sv [20 ms, 73 lines, SystemVerilog_2012] ...
+Loading (6) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\baseline_restore.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\baseline_restore.sv [17 ms, 37 lines, SystemVerilog_2012] ...
+Loading (7) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0.v [1 ms, 91 lines, Verilog_2001] ...
+Loading (8) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v [9 ms, 209 lines, Verilog_2001] ...
+Loading (9) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_grid.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_grid.sv [15 ms, 64 lines, SystemVerilog_2012] ...
+Loading (10) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv [27 ms, 380 lines, SystemVerilog_2012] ...
+Loading (11) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\ring_buffer.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\ring_buffer.sv [5 ms, 56 lines, SystemVerilog_2012] ...
+Loading (12) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\sampling_timer.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\sampling_timer.sv [1 ms, 45 lines, SystemVerilog_2012] ...
+Loading (13) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\top_ecg.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\top_ecg.sv [7 ms, 143 lines, SystemVerilog_2012] ...
+Loading (14) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_formatter.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_formatter.sv [5 ms, 43 lines, SystemVerilog_2012] ...
+Loading (15) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_if.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_if.sv [4 ms, 32 lines, SystemVerilog_2012] ...
+Loading (16) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv [30 ms, 405 lines, SystemVerilog_2012] ...
+Loading (17) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_fpga\top_fpga_tb.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_fpga\top_fpga_tb.sv [5 ms, 108 lines, SystemVerilog_2012] ...
+Loading (18) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_vga\top_vga_tb.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_vga\top_vga_tb.sv [4 ms, 106 lines, SystemVerilog_2012] ...
+Loading (19) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_pkg.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_pkg.sv [1 ms, 30 lines, SystemVerilog_2012] ...
+Loading (20) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv [5 ms, 104 lines, SystemVerilog_2012] ...
+Loading (21) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_timing.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_timing.sv [4 ms, 67 lines, SystemVerilog_2012] ...
+Loading (22) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\render_signal.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\render_signal.sv [6 ms, 89 lines, SystemVerilog_2012] ...
+Loading (23) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv [3 ms, 38 lines, SystemVerilog_2012] ...
+Loading (24) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v [7 ms, 2765 lines, Verilog_2001] ...
+Loading (25) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_sim_netlist.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_sim_netlist.v [5 ms, 2765 lines, Verilog_2001] ...
+Loading (26) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_sim_netlist.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_sim_netlist.v [4 ms, 3128 lines, Verilog_2001] ...
+Loading (27) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v [0 ms, 85 lines, Verilog_2001] ...
+*** Done parsing invocation #2 [234 ms] ***
+*** Done parsing [LT 250 ms, PT 234 ms] ***
+*** Total number of lines [10 984] ***
+*** Error: SYSTEM_VERILOG_2012: Unexpected token ','
+    at line 35 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv:35 [compile index 23][invocation 1]
+Performing post full build actions ...
+Performing post full build step 1 (SRI) [3 ms] ...
+Performing post full build step 2 (RI) [5 ms] ...
+Performing post full build step 3 (RCP) [4 ms] ...
+*** Files summary [27 total, 27 unique, 0 optimized] ***
+*** Done SystemVerilog build [488 ms] ***
+
+*** Start mixed mode extension build ***
+Performing mixed post full build step (VLOG - RI) [1 ms] ...
+*** Warning: UNSPECIFIED_TOP: Please specify a -top module/entity/configuration in the project build file
+*** Top design candidates: work.top_ecg_basys3, work.top_fpga_tb, work.top_vga_tb, work.vga_timing_tb, work.draw_mouse
+Performing mixed post full build step (MIXED - ELAB) [270 ms] ...
+Performing mixed post full build step (MIXED - UNEL) [56 ms] ...
+*** Warning: UNDECLARED_MODULE: Module 'IBUF' is not declared
+    at line 81 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:81 [compile index 8]
+*** Warning: UNDECLARED_MODULE: Module 'MMCME2_ADV' is not declared
+    at line 122 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:122 [compile index 8]
+*** Warning: UNDECLARED_MODULE: Module 'BUFG' is not declared
+    at line 188 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:188 [compile index 8]
+*** Warning: UNDECLARED_MODULE: Module 'BUFG' is not declared
+    at line 197 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:197 [compile index 8]
+*** Warning: UNDECLARED_MODULE: Module 'BUFG' is not declared
+    at line 202 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:202 [compile index 8]
+*** Warning: UNDECLARED_MODULE: Module 'fir_compiler_0' is not declared
+    at line 77 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\top_ecg.sv:77 [compile index 13]
+*** Warning: UNDECLARED_MODULE: Module 'top_vga_basys3' is not declared
+    at line 61 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_fpga\top_fpga_tb.sv:61 [compile index 17]
+*** Warning: UNDECLARED_MODULE: Module 'top_vga' is not declared
+    at line 60 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_vga\top_vga_tb.sv:60 [compile index 18]
+*** Error: NON_EXISTING_PORT: Non existing port 'vcount' of module 'vga_timing'
+    at line 56 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:56 [compile index 20]
+*** Error: NON_EXISTING_PORT: Non existing port 'vsync' of module 'vga_timing'
+    at line 57 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:57 [compile index 20]
+*** Error: NON_EXISTING_PORT: Non existing port 'vblnk' of module 'vga_timing'
+    at line 58 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:58 [compile index 20]
+*** Error: NON_EXISTING_PORT: Non existing port 'hcount' of module 'vga_timing'
+    at line 59 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:59 [compile index 20]
+*** Error: NON_EXISTING_PORT: Non existing port 'hsync' of module 'vga_timing'
+    at line 60 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:60 [compile index 20]
+*** Error: NON_EXISTING_PORT: Non existing port 'hblnk' of module 'vga_timing'
+    at line 61 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:61 [compile index 20]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'vga_timing' is missing port connection to interface 'vga_out'
+    at line 53 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:53 [compile index 20]
+*** Warning: UNDECLARED_MODULE: Module 'MouseDisplay' is not declared
+    at line 33 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv:33 [compile index 23]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'frame_number' in sequential logic (use non-blocking assignment)
+    at line 401 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv:401 [compile index 16]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 167 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:167 [compile index 10]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 196 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:196 [compile index 10]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 253 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:253 [compile index 10]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 282 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:282 [compile index 10]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 313 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:313 [compile index 10]
+*** Warning: UNELABORATED_MODULE: Module 'work.decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix' is not elaborated
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v:19 [compile index 1]
+*** Warning: UNELABORATED_MODULE: Module 'work.decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix' is not elaborated
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v:19 [compile index 2]
+*** Warning: UNELABORATED_MODULE: Module 'work.decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix' is not elaborated
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:19 [compile index 3]
+*** Warning: UNELABORATED_MODULE: Module 'work.decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix' is not elaborated
+    at line 18 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:18 [compile index 24]
+*** Warning: UNELABORATED_MODULE: Module 'work.glbl' is not elaborated
+    at line 2686 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2686 [compile index 24]
+*** Warning: UNELABORATED_MODULE: Module 'work.decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix' is not elaborated
+    at line 18 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_sim_netlist.v:18 [compile index 25]
+*** Warning: UNELABORATED_MODULE: Module 'work.decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix' is not elaborated
+    at line 18 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_sim_netlist.v:18 [compile index 26]
+Performing mixed post full build step (VLOG - RD) [4 ms] ...
+Performing mixed post full build step (VLOG - US) [104 ms] ...
+*** Warning: DUPLICATE_MODULE: Duplicate module 'decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix', already declared
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v:19 [compile index 2]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix', already declared
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:19 [compile index 3]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix', already declared
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v
+    at line 18 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:18 [compile index 24]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix', already declared
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v
+    at line 18 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_sim_netlist.v:18 [compile index 25]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix', already declared
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v
+    at line 18 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_sim_netlist.v:18 [compile index 26]
+*** Warning: SIGNAL_NEVER_USED: Signal 'aclk' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v:19 [compile index 1]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tvalid' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v:19 [compile index 1]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tready' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v:19 [compile index 1]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tdata' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v:20 [compile index 1]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tvalid' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v:20 [compile index 1]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tdata' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_stub.v:20 [compile index 1]
+*** Warning: SIGNAL_NEVER_USED: Signal 'aclk' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v:19 [compile index 2]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tvalid' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v:19 [compile index 2]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tready' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v:19 [compile index 2]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tdata' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v:20 [compile index 2]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tvalid' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v:20 [compile index 2]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tdata' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\4\a\4a8177eb26b1dc2a\fir_compiler_notch_stub.v:20 [compile index 2]
+*** Warning: SIGNAL_NEVER_USED: Signal 'aclk' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:19 [compile index 3]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tvalid' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:19 [compile index 3]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tready' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:19 [compile index 3]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tdata' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:20 [compile index 3]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tvalid' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:20 [compile index 3]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tready' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:20 [compile index 3]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tdata' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\7\d\7dba27b8d1ba456c\fir_compiler_notch_stub.v:20 [compile index 3]
+*** Warning: SIGNAL_NEVER_USED: Signal 'aclk' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.ip_user_files\ip\fir_compiler_notch\fir_compiler_notch_stub.v:19 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tvalid' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.ip_user_files\ip\fir_compiler_notch\fir_compiler_notch_stub.v:19 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tready' is never used
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.ip_user_files\ip\fir_compiler_notch\fir_compiler_notch_stub.v:19 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 's_axis_data_tdata' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.ip_user_files\ip\fir_compiler_notch\fir_compiler_notch_stub.v:20 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tvalid' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.ip_user_files\ip\fir_compiler_notch\fir_compiler_notch_stub.v:20 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'm_axis_data_tdata' is never used
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.ip_user_files\ip\fir_compiler_notch\fir_compiler_notch_stub.v:20 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_in1_clk_wiz_0_buf' is never used
+    at line 79 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:79 [compile index 8]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_in2_clk_wiz_0' is never used
+    at line 80 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:80 [compile index 8]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out3_clk_wiz_0' is never used
+    at line 97 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:97 [compile index 8]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out4_clk_wiz_0' is never used
+    at line 98 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:98 [compile index 8]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out5_clk_wiz_0' is never used
+    at line 99 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:99 [compile index 8]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out6_clk_wiz_0' is never used
+    at line 100 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:100 [compile index 8]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out7_clk_wiz_0' is never used
+    at line 101 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:101 [compile index 8]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'file_open' is not an input port
+    at line 388 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv:388 [compile index 16]
+*** Warning: MULTIPLE_CLOCKS_BLOCK: Procedural block driven by multiple clocks (go_delayed, go)
+    at line 395 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv:395 [compile index 16]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'RST_START_TIME' is never used
+    at line 21 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:21 [compile index 20]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'vcount' is never written
+    at line 30 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:30 [compile index 20]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'hcount' is never written
+    at line 30 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:30 [compile index 20]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'vsync' is never written
+    at line 31 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:31 [compile index 20]
+*** Warning: SIGNAL_NEVER_USED: Signal 'hsync' is never used
+    at line 31 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:31 [compile index 20]
+*** Warning: SIGNAL_NEVER_USED: Signal 'vblnk' is never used
+    at line 32 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:32 [compile index 20]
+*** Warning: SIGNAL_NEVER_USED: Signal 'hblnk' is never used
+    at line 32 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:32 [compile index 20]
+*** Warning: SIGNAL_NEVER_USED: Signal 'x_start' is never used
+    at line 4 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv:4 [compile index 23]
+*** Warning: SIGNAL_NEVER_USED: Signal 'y_start' is never used
+    at line 5 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv:5 [compile index 23]
+*** Warning: SIGNAL_NEVER_USED: Signal 'right_button_in' is never used
+    at line 6 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv:6 [compile index 23]
+*** Warning: SIGNAL_NEVER_USED: Signal 'rigt_button_out' is never used
+    at line 9 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv:9 [compile index 23]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GSR' is never read
+    at line 2694 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2694 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GTS' is never read
+    at line 2695 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2695 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'GWE' is never used
+    at line 2696 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2696 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PRLD' is never read
+    at line 2697 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2697 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GRESTORE' is never read
+    at line 2698 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2698 [compile index 24]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'p_up_tmp' is never written
+    at line 2699 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2699 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PLL_LOCKG' is never read
+    at line 2700 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2700 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'PROGB_GLBL' is never used
+    at line 2702 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2702 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'CCLKO_GLBL' is never used
+    at line 2703 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2703 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'FCSBO_GLBL' is never used
+    at line 2704 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2704 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'DO_GLBL' is never used
+    at line 2705 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2705 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'DI_GLBL' is never used
+    at line 2706 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2706 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TDO_GLBL' is never used
+    at line 2714 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2714 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TCK_GLBL' is never used
+    at line 2715 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2715 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TDI_GLBL' is never used
+    at line 2716 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2716 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TMS_GLBL' is never used
+    at line 2717 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2717 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TRST_GLBL' is never used
+    at line 2718 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2718 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_CAPTURE_GLBL' is never used
+    at line 2720 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2720 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_RESET_GLBL' is never used
+    at line 2721 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2721 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_SHIFT_GLBL' is never used
+    at line 2722 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2722 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_UPDATE_GLBL' is never used
+    at line 2723 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2723 [compile index 24]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_RUNTEST_GLBL' is never used
+    at line 2724 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2724 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_SEL1_GLBL' is never read
+    at line 2726 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2726 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_SEL2_GLBL' is never read
+    at line 2727 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2727 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_SEL3_GLBL' is never read
+    at line 2728 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2728 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_SEL4_GLBL' is never read
+    at line 2729 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2729 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_USER_TDO1_GLBL' is never read
+    at line 2731 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2731 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_USER_TDO2_GLBL' is never read
+    at line 2732 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2732 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_USER_TDO3_GLBL' is never read
+    at line 2733 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2733 [compile index 24]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_USER_TDO4_GLBL' is never read
+    at line 2734 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\build\ecg_project.cache\ip\2025.2\2\5\2547efd1578749b4\fir_compiler_notch_sim_netlist.v:2734 [compile index 24]
+*** Done mixed mode extension build [456 ms] ***
+*** Total build time [1s.749ms] ***

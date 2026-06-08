@@ -43,6 +43,7 @@ set sv_files {
     ../rtl/baseline_restore.sv
     ../rtl/vga_formatter.sv
     ../rtl/render_signal.sv
+    ../rtl/draw_mouse.sv
     ../rtl/vga_if.sv
     rtl/top_ecg_basys3.sv
 }
@@ -60,9 +61,11 @@ set ip_core_files {
 }
 
 # Specify VHDL design files location            -- EDIT
-# set vhdl_files {
-#    path/to/file.vhd
-# }
+set vhdl_files {
+   ../rtl/Ps2Interface.vhd
+   ../rtl/MouseCtl.vhd
+   ../rtl/MouseDisplay.vhd
+}
 
 # Specify files for a memory initialization     -- EDIT
 # set mem_files {

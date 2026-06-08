@@ -3,6 +3,8 @@ module top_ecg (
         input  logic clk_100MHz,
         input  logic clk_65MHz,
         input  logic rst_n,
+        inout  logic ps2_clk,
+        inout  logic ps2_data,
         inout wire i2c_sda,
         output wire i2c_scl,
         output logic vs,
@@ -30,14 +32,20 @@ module top_ecg (
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
     wire [15:0] ecg_data_received;
+    wire [11:0] x_pos;
+    wire [11:0] y_pos;
+
+    logic [23:0] mouse_cords_s1;
+    logic [23:0] mouse_cords_s2;
 
     vga_if if_tim();
     vga_if if_grid();
     vga_if if_render();
+    vga_if if_mouse();
 
-    assign vs = if_render.vsync;
-    assign hs = if_render.hsync;
-    assign {r,g,b} = if_render.rgb; //zmienic na rect na render
+    assign vs = if_mouse.vsync;
+    assign hs = if_mouse.hsync;
+    assign {r,g,b} = if_mouse.rgb; 
 
     /*
      * INSTANCES OF MODULES
@@ -136,6 +144,54 @@ module top_ecg (
         .vga_in(if_grid),
         .vga_out(if_render),
         .read_address(read_address)
+    );
+
+    /*
+     * 100MHz to 65MHz 2 stage pipeline
+    */
+   always_ff @(posedge clk_65MHz or negedge rst_n) begin
+        if (!rst_n) begin
+            mouse_cords_s1 <= '0;  
+            mouse_cords_s2 <= '0;
+        end
+        else begin
+            mouse_cords_s1 <= {x_pos,y_pos};
+            mouse_cords_s2 <= mouse_cords_s1;
+        end
+   end
+
+   /*
+    * MOUSE
+   */
+    MouseCtl u_MouseCtl (
+        .clk      (clk_100MHz),
+        .rst      (!rst_n),
+        .ps2_clk  (ps2_clk),
+        .ps2_data (ps2_data),
+        .xpos     (x_pos),
+        .ypos     (y_pos),
+
+        //MouseCtl module unused outputs
+        .zpos     (),
+        .left     (),
+        .middle   (),
+        .right    (),
+        .new_event(),
+
+        //MouseCtl module unused inputs
+        .value    (12'b0),
+        .setx     (1'b0),
+        .sety     (1'b0),
+        .setmax_x (1'b0),
+        .setmax_y (1'b0)
+    );
+   draw_mouse u_draw_mouse (
+        .clk(clk_65MHz),
+        .rst_n(rst_n),
+        .x_start(mouse_cords_s2[23:12]),
+        .y_start(mouse_cords_s2[11:0]),
+        .vga_in(if_render),
+        .vga_out(if_mouse)
     );
 
 

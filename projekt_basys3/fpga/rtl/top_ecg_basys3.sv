@@ -16,6 +16,8 @@ module top_ecg_basys3 (
         input  wire clk,
         input  wire btnC,
         inout wire [7:2] JA,
+        inout wire PS2Clk,
+        inout wire PS2Data,
         output wire Vsync,
         output wire Hsync,
         output wire [3:0] vgaRed,
@@ -59,6 +61,8 @@ module top_ecg_basys3 (
     top_ecg u_top_ecg (
         .clk_100MHz(clk_100MHz),
         .clk_65MHz(clk_65MHz),
+        .ps2_clk(PS2Clk),
+        .ps2_data(PS2Data),
         .rst_n(!btnC & locked),
         .i2c_sda(JA[3]),
         .i2c_scl(JA[2]),
