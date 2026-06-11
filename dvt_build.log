@@ -1,0 +1,227 @@
+*** Start analyzing build configuration ***
+INFO: Auto-config - Scanning: C:\Users\pbuko\Desktop\SystemVerilog\projekt
+INFO: Auto-config - VLOG: C:\Users\pbuko\Desktop\SystemVerilog\projekt
+INFO: Auto-config - Wrote:
+    .dvt\default.build.auto.1
+*** List of included argument files ***
+    Build configuration file:  C:\Users\pbuko\Desktop\SystemVerilog\projekt\.dvt\default.build
+    -f c:\Users\pbuko\Desktop\SystemVerilog\projekt\.dvt\default.build.auto.1
+*** List of invocations ***
+Invocation #1 +dvt_init+dvt in c:\Users\pbuko\Desktop\SystemVerilog\projekt\.dvt\default.build.auto.1 at line 9
+*** Done analyzing build configuration [915 ms] ***
+
+*** Start SystemVerilog build ***
+*** Invocation #1***
+*** IMPLICIT INVOCATION - NOTHING TO COMPILE
+*** Done parsing invocation #1
+*** Invocation #2***
+Loading (1) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\rtl\top_ecg_basys3.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fpga\rtl\top_ecg_basys3.sv [50 ms, 77 lines, SystemVerilog_2012] ...
+Loading (2) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\baseline_restore.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\baseline_restore.sv [27 ms, 37 lines, SystemVerilog_2012] ...
+Loading (3) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0.v [1 ms, 91 lines, Verilog_2001] ...
+Loading (4) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v [10 ms, 209 lines, Verilog_2001] ...
+Loading (5) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_grid.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_grid.sv [15 ms, 64 lines, SystemVerilog_2012] ...
+Loading (6) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\gui_event_control.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\gui_event_control.sv [9 ms, 130 lines, SystemVerilog_2012] ...
+Loading (7) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv [21 ms, 380 lines, SystemVerilog_2012] ...
+Loading (8) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\mouse_event_generator.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\mouse_event_generator.sv [4 ms, 57 lines, SystemVerilog_2012] ...
+Loading (9) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\ring_buffer.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\ring_buffer.sv [5 ms, 56 lines, SystemVerilog_2012] ...
+Loading (10) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\sampling_timer.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\sampling_timer.sv [3 ms, 45 lines, SystemVerilog_2012] ...
+Loading (11) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\top_ecg.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\top_ecg.sv [8 ms, 199 lines, SystemVerilog_2012] ...
+Loading (12) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_formatter.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_formatter.sv [4 ms, 43 lines, SystemVerilog_2012] ...
+Loading (13) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_if.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_if.sv [4 ms, 32 lines, SystemVerilog_2012] ...
+Loading (14) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv [34 ms, 405 lines, SystemVerilog_2012] ...
+Loading (15) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_fpga\top_fpga_tb.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_fpga\top_fpga_tb.sv [6 ms, 108 lines, SystemVerilog_2012] ...
+Loading (16) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_vga\top_vga_tb.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_vga\top_vga_tb.sv [4 ms, 106 lines, SystemVerilog_2012] ...
+Loading (17) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_pkg.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_pkg.sv [2 ms, 30 lines, SystemVerilog_2012] ...
+Loading (18) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv [5 ms, 104 lines, SystemVerilog_2012] ...
+Loading (19) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_timing.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\vga_timing.sv [4 ms, 67 lines, SystemVerilog_2012] ...
+Loading (20) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\render_signal.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\render_signal.sv [6 ms, 89 lines, SystemVerilog_2012] ...
+Loading (21) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv [2 ms, 43 lines, SystemVerilog_2012] ...
+Loading (22) C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v ...
+Done C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v [4 ms, 85 lines, Verilog_2001] ...
+*** Done parsing invocation #2 [235 ms] ***
+*** Done parsing [LT 168 ms, PT 235 ms] ***
+*** Total number of lines [2 457] ***
+Performing post full build actions ...
+Performing post full build step 1 (SRI) [3 ms] ...
+Performing post full build step 2 (RI) [4 ms] ...
+Performing post full build step 3 (RCP) [3 ms] ...
+*** Files summary [22 total, 22 unique, 0 optimized] ***
+*** Done SystemVerilog build [470 ms] ***
+
+*** Start mixed mode extension build ***
+Performing mixed post full build step (VLOG - RI) [2 ms] ...
+*** Warning: UNSPECIFIED_TOP: Please specify a -top module/entity/configuration in the project build file
+*** Top design candidates: work.top_ecg_basys3, work.top_fpga_tb, work.top_vga_tb, work.vga_timing_tb
+Performing mixed post full build step (MIXED - ELAB) [297 ms] ...
+Performing mixed post full build step (MIXED - UNEL) [54 ms] ...
+*** Warning: UNDECLARED_MODULE: Module 'IBUF' is not declared
+    at line 81 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:81 [compile index 4]
+*** Warning: UNDECLARED_MODULE: Module 'MMCME2_ADV' is not declared
+    at line 122 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:122 [compile index 4]
+*** Warning: UNDECLARED_MODULE: Module 'BUFG' is not declared
+    at line 188 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:188 [compile index 4]
+*** Warning: UNDECLARED_MODULE: Module 'BUFG' is not declared
+    at line 197 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:197 [compile index 4]
+*** Warning: UNDECLARED_MODULE: Module 'BUFG' is not declared
+    at line 202 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:202 [compile index 4]
+*** Warning: UNDECLARED_MODULE: Module 'fir_compiler_0' is not declared
+    at line 85 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\top_ecg.sv:85 [compile index 11]
+*** Warning: UNDECLARED_MODULE: Module 'fir_compiler_notch' is not declared
+    at line 97 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\top_ecg.sv:97 [compile index 11]
+*** Warning: UNDECLARED_MODULE: Module 'MouseCtl' is not declared
+    at line 166 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\top_ecg.sv:166 [compile index 11]
+*** Warning: UNDECLARED_MODULE: Module 'MouseDisplay' is not declared
+    at line 31 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\draw_mouse.sv:31 [compile index 21]
+*** Warning: UNDECLARED_MODULE: Module 'top_vga_basys3' is not declared
+    at line 61 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_fpga\top_fpga_tb.sv:61 [compile index 15]
+*** Warning: UNDECLARED_MODULE: Module 'top_vga' is not declared
+    at line 60 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\top_vga\top_vga_tb.sv:60 [compile index 16]
+*** Error: NON_EXISTING_PORT: Non existing port 'vcount' of module 'vga_timing'
+    at line 56 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:56 [compile index 18]
+*** Error: NON_EXISTING_PORT: Non existing port 'vsync' of module 'vga_timing'
+    at line 57 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:57 [compile index 18]
+*** Error: NON_EXISTING_PORT: Non existing port 'vblnk' of module 'vga_timing'
+    at line 58 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:58 [compile index 18]
+*** Error: NON_EXISTING_PORT: Non existing port 'hcount' of module 'vga_timing'
+    at line 59 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:59 [compile index 18]
+*** Error: NON_EXISTING_PORT: Non existing port 'hsync' of module 'vga_timing'
+    at line 60 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:60 [compile index 18]
+*** Error: NON_EXISTING_PORT: Non existing port 'hblnk' of module 'vga_timing'
+    at line 61 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:61 [compile index 18]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'vga_timing' is missing port connection to interface 'vga_out'
+    at line 53 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:53 [compile index 18]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'frame_number' in sequential logic (use non-blocking assignment)
+    at line 401 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv:401 [compile index 14]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 167 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:167 [compile index 7]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 196 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:196 [compile index 7]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 253 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:253 [compile index 7]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 282 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:282 [compile index 7]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'bit_counter' of '4-bit' type from '3'd7' of '3-bit' type
+    at line 313 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\i2c_master.sv:313 [compile index 7]
+*** Warning: UNELABORATED_MODULE: Module 'work.gui_event_control' is not elaborated
+    at line 1 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\gui_event_control.sv:1 [compile index 6]
+*** Warning: UNELABORATED_MODULE: Module 'work.mouse_event_generator' is not elaborated
+    at line 1 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\mouse_event_generator.sv:1 [compile index 8]
+*** Warning: UNELABORATED_MODULE: Module 'work.glbl' is not elaborated
+    at line 6 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:6 [compile index 22]
+Performing mixed post full build step (VLOG - RD) [3 ms] ...
+Performing mixed post full build step (VLOG - US) [101 ms] ...
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_in1_clk_wiz_0_buf' is never used
+    at line 79 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:79 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_in2_clk_wiz_0' is never used
+    at line 80 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:80 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out3_clk_wiz_0' is never used
+    at line 97 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:97 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out4_clk_wiz_0' is never used
+    at line 98 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:98 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out5_clk_wiz_0' is never used
+    at line 99 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:99 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out6_clk_wiz_0' is never used
+    at line 100 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:100 [compile index 4]
+*** Warning: SIGNAL_NEVER_USED: Signal 'clk_out7_clk_wiz_0' is never used
+    at line 101 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\rtl\clk_wiz_0_clk_wiz.v:101 [compile index 4]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'file_open' is not an input port
+    at line 388 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv:388 [compile index 14]
+*** Warning: MULTIPLE_CLOCKS_BLOCK: Procedural block driven by multiple clocks (go_delayed, go)
+    at line 395 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\tiff_writer.sv:395 [compile index 14]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'RST_START_TIME' is never used
+    at line 21 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:21 [compile index 18]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'vcount' is never written
+    at line 30 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:30 [compile index 18]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'hcount' is never written
+    at line 30 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:30 [compile index 18]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'vsync' is never written
+    at line 31 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:31 [compile index 18]
+*** Warning: SIGNAL_NEVER_USED: Signal 'hsync' is never used
+    at line 31 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:31 [compile index 18]
+*** Warning: SIGNAL_NEVER_USED: Signal 'vblnk' is never used
+    at line 32 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:32 [compile index 18]
+*** Warning: SIGNAL_NEVER_USED: Signal 'hblnk' is never used
+    at line 32 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\vga_timing\vga_timing_tb.sv:32 [compile index 18]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GSR' is never read
+    at line 14 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:14 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GTS' is never read
+    at line 15 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:15 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'GWE' is never used
+    at line 16 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:16 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PRLD' is never read
+    at line 17 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:17 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GRESTORE' is never read
+    at line 18 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:18 [compile index 22]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'p_up_tmp' is never written
+    at line 19 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:19 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PLL_LOCKG' is never read
+    at line 20 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:20 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'PROGB_GLBL' is never used
+    at line 22 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:22 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'CCLKO_GLBL' is never used
+    at line 23 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:23 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'FCSBO_GLBL' is never used
+    at line 24 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:24 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'DO_GLBL' is never used
+    at line 25 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:25 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'DI_GLBL' is never used
+    at line 26 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:26 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TDO_GLBL' is never used
+    at line 34 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:34 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TCK_GLBL' is never used
+    at line 35 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:35 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TDI_GLBL' is never used
+    at line 36 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:36 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TMS_GLBL' is never used
+    at line 37 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:37 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_TRST_GLBL' is never used
+    at line 38 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:38 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_CAPTURE_GLBL' is never used
+    at line 40 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:40 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_RESET_GLBL' is never used
+    at line 41 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:41 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_SHIFT_GLBL' is never used
+    at line 42 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:42 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_UPDATE_GLBL' is never used
+    at line 43 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:43 [compile index 22]
+*** Warning: SIGNAL_NEVER_USED: Signal 'JTAG_RUNTEST_GLBL' is never used
+    at line 44 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:44 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_SEL1_GLBL' is never read
+    at line 46 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:46 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_SEL2_GLBL' is never read
+    at line 47 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:47 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_SEL3_GLBL' is never read
+    at line 48 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:48 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_SEL4_GLBL' is never read
+    at line 49 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:49 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_USER_TDO1_GLBL' is never read
+    at line 51 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:51 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_USER_TDO2_GLBL' is never read
+    at line 52 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:52 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_USER_TDO3_GLBL' is never read
+    at line 53 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:53 [compile index 22]
+*** Warning: SIGNAL_NEVER_READ: Signal 'JTAG_USER_TDO4_GLBL' is never read
+    at line 54 in C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\sim\common\glbl.v:54 [compile index 22]
+*** Done mixed mode extension build [471 ms] ***
+*** Total build time [1s.938ms] ***
