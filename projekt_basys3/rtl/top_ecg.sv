@@ -37,10 +37,11 @@ module top_ecg (
     vga_if if_grid();
     vga_if if_render();
     vga_if if_ui();
+    vga_if if_mouse();
 
-    assign vs = if_ui.vsync;
-    assign hs = if_ui.hsync;
-    assign {r,g,b} = if_ui.rgb;
+    assign vs = if_mouse.vsync;
+    assign hs = if_mouse.hsync;
+    assign {r,g,b} = if_mouse.rgb;
 
     /*
      * INSTANCES OF MODULES
@@ -167,17 +168,6 @@ module top_ecg (
         .ps2_data(ps2_data)     // Dodaj ps2_data do portów we/wy na górze top_ecg!
     );
 
-    // Nasz nowy menedżer UI
-    vga_ui_manager u_vga_ui (
-        .clk(clk_65MHz),
-        .rst_n(rst_n),
-        .mouse_x(mouse_x_pos),
-        .mouse_y(mouse_y_pos),
-        .mouse_left(mouse_left_click),
-        .vga_in(if_render),     // Wchodzi sygnał z EKG
-        .vga_out(if_ui)         // Wychodzi okienkowy interfejs
-    );
-
 /*
      * PAN-TOMPKINS STEP 2: DIFFERENTIATOR
      * Takes input directly from FIR Bandpass
@@ -263,6 +253,29 @@ module top_ecg (
         
         .bpm(current_bpm),
         .bpm_valid(bpm_valid)
+    );
+
+    vga_ui_manager u_vga_ui (
+        .clk_65MHz(clk_65MHz),      
+        .clk_100MHz(clk_100MHz),     
+        .rst_n(rst_n),
+        .current_bpm(current_bpm),
+        .bpm_valid(bpm_updated),     
+        .mouse_x(mouse_x_pos),
+        .mouse_y(mouse_y_pos),
+        .mouse_left(mouse_left_click),
+        .vga_in(if_render),          
+        .vga_out(if_ui)              
+    );
+
+    // --- NAKŁADANIE KURSORA MYSZKI (Najwyższa warstwa) ---
+    draw_mouse u_mouse_cursor (
+        .clk(clk_65MHz),
+        .rst_n(rst_n),
+        .x_start(mouse_x_pos),
+        .y_start(mouse_y_pos),
+        .vga_in(if_ui),       // Pobiera gotowy obraz z okienkami
+        .vga_out(if_mouse)    // Wyrzuca ostateczny obraz z nałożonym kursorem na monitor
     );
 
 endmodule
