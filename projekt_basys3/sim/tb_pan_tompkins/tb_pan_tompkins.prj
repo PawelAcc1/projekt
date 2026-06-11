@@ -2,5 +2,6 @@ sv work "../../rtl/differentiator.sv"
 sv work "../../rtl/squarer.sv"
 sv work "../../rtl/moving_window_integration.sv"
 sv work "../../rtl/adaptive_threshold.sv"
+sv work "../../rtl/bpm_calculator.sv"
 sv work "tb_pan_tompkins.sv"
 

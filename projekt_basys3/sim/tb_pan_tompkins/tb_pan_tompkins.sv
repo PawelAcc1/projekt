@@ -48,6 +48,18 @@ module tb_pan_tompkins;
         .r_peak_detected(r_peak_detected)
     );
 
+    logic [7:0] bpm_out;
+    logic bpm_valid_out;
+
+    bpm_calculator u_bpm (
+        .clk(clk),
+        .rst_n(rst_n),
+        .sample_tick(sample_valid_in), // Flaga valid działa tu idealnie jako tyknięcie zegara 500 Hz
+        .r_peak_detected(r_peak_detected),
+        .bpm(bpm_out),
+        .bpm_valid(bpm_valid_out)
+    );
+
     // Generator zegara
     initial begin
         clk = 1'b0;
@@ -56,7 +68,6 @@ module tb_pan_tompkins;
 
     // STYMULACJA SYGNAŁU
     initial begin
-        // Reset
         rst_n = 1'b0;
         sample_valid_in = 1'b0;
         raw_data_in = '0;
@@ -64,20 +75,25 @@ module tb_pan_tompkins;
         rst_n = 1'b1;
         #(CLK_PERIOD * 10);
 
-        // 1. Płaska linia (cisza)
+        // 1. Płaska linia na start
         repeat (50) send_sample(16'd0);
 
-        // 2. Sztuczny pik R (bardzo stromy i duży)
-        send_sample(16'd50);
-        send_sample(16'd800);
-        send_sample(16'd3000); // Szczyt QRS
-        send_sample(-16'd800);
-        send_sample(-16'd50);
+        // 2. Symulujemy 5 uderzeń serca w pętli
+        repeat (7) begin
+            // Sztuczny QRS
+            send_sample(16'd50);
+            send_sample(16'd800);
+            send_sample(16'd3000); 
+            send_sample(-16'd800);
+            send_sample(-16'd50);
 
-        // 3. Płaska linia (odczekanie na reakcję modułów)
+            // Przerwa (dokładnie 400 próbek = 75 BPM)
+            repeat (400) send_sample(16'd0);
+        end
+
+        // 3. Czekamy chwilę na przetworzenie ostatniego wyniku
         repeat (150) send_sample(16'd0);
 
-        // Koniec
         $finish;
     end
 
