@@ -238,23 +238,6 @@ module top_ecg (
         .bpm_valid       (bpm_updated)            // Flaga nowej wartości
     );
 
-    // ==========================================
-    // KALKULATOR TĘTNA (BPM)
-    // ==========================================
-    bpm_calculator u_bpm_calculator (
-        .clk(clk),
-        .rst_n(rst_n), 
-        
-        // Tyknięcie 500 Hz (podmień nazwę na tę, która wychodzi z Twojego sampling_timer.sv)
-        .sample_tick(sample_valid_500Hz), 
-        
-        // Impuls piku R (podmień nazwę na tę, która wychodzi z adaptive_threshold)
-        .r_peak_detected(r_peak_wire), 
-        
-        .bpm(current_bpm),
-        .bpm_valid(bpm_valid)
-    );
-
     vga_ui_manager u_vga_ui (
         .clk_65MHz(clk_65MHz),      
         .clk_100MHz(clk_100MHz),     
