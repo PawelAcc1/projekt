@@ -32,20 +32,15 @@ module top_ecg (
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
     wire [15:0] ecg_data_received;
-    wire [11:0] x_pos;
-    wire [11:0] y_pos;
-
-    logic [23:0] mouse_cords_s1;
-    logic [23:0] mouse_cords_s2;
 
     vga_if if_tim();
     vga_if if_grid();
     vga_if if_render();
-    vga_if if_mouse();
+    vga_if if_ui();
 
-    assign vs = if_mouse.vsync;
-    assign hs = if_mouse.hsync;
-    assign {r,g,b} = if_mouse.rgb; 
+    assign vs = if_ui.vsync;
+    assign hs = if_ui.hsync;
+    assign {r,g,b} = if_ui.rgb;
 
     /*
      * INSTANCES OF MODULES
@@ -146,53 +141,128 @@ module top_ecg (
         .read_address(read_address)
     );
 
-    /*
-     * 100MHz to 65MHz 2 stage pipeline
-    */
-   always_ff @(posedge clk_65MHz or negedge rst_n) begin
-        if (!rst_n) begin
-            mouse_cords_s1 <= '0;  
-            mouse_cords_s2 <= '0;
-        end
-        else begin
-            mouse_cords_s1 <= {x_pos,y_pos};
-            mouse_cords_s2 <= mouse_cords_s1;
-        end
-   end
+    // ... poprzedni kod render_signal ...
 
-   /*
-    * MOUSE
-   */
-    MouseCtl u_MouseCtl (
-        .clk      (clk_100MHz),
-        .rst      (!rst_n),
-        .ps2_clk  (ps2_clk),
-        .ps2_data (ps2_data),
-        .xpos     (x_pos),
-        .ypos     (y_pos),
+    // Odbiór danych z kontrolera myszy PS/2
+    wire [11:0] mouse_x_pos;
+    wire [11:0] mouse_y_pos;
+    wire mouse_left_click;
 
-        //MouseCtl module unused outputs
-        .zpos     (),
-        .left     (),
-        .middle   (),
-        .right    (),
+    MouseCtl u_mouse_ctl (
+        .clk(clk_100MHz),       // Zegar 100MHz dla PS/2
+        .rst(~rst_n),           // Uwaga: MouseCtl wymaga resetu w stanie wysokim
+        .xpos(mouse_x_pos),
+        .ypos(mouse_y_pos),
+        .zpos(),
+        .left(mouse_left_click),
+        .middle(),
+        .right(),
         .new_event(),
-
-        //MouseCtl module unused inputs
-        .value    (12'b0),
-        .setx     (1'b0),
-        .sety     (1'b0),
-        .setmax_x (1'b0),
-        .setmax_y (1'b0)
+        .value(12'b0),
+        .setx(1'b0),
+        .sety(1'b0),
+        .setmax_x(1'b0),
+        .setmax_y(1'b0),
+        .ps2_clk(ps2_clk),      // Dodaj ps2_clk do portów we/wy na górze top_ecg!
+        .ps2_data(ps2_data)     // Dodaj ps2_data do portów we/wy na górze top_ecg!
     );
-   draw_mouse u_draw_mouse (
+
+    // Nasz nowy menedżer UI
+    vga_ui_manager u_vga_ui (
         .clk(clk_65MHz),
         .rst_n(rst_n),
-        .x_start(mouse_cords_s2[23:12]),
-        .y_start(mouse_cords_s2[11:0]),
-        .vga_in(if_render),
-        .vga_out(if_mouse)
+        .mouse_x(mouse_x_pos),
+        .mouse_y(mouse_y_pos),
+        .mouse_left(mouse_left_click),
+        .vga_in(if_render),     // Wchodzi sygnał z EKG
+        .vga_out(if_ui)         // Wychodzi okienkowy interfejs
     );
 
+/*
+     * PAN-TOMPKINS STEP 2: DIFFERENTIATOR
+     * Takes input directly from FIR Bandpass
+    */
+    differentiator u_differentiator (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .sample_valid_in  (data_filtered_0), // Impuls z filtru Bandpass
+        .data_in          (filtered_data_0), // Dane z filtru Bandpass
+        .data_out         (diff_data_out),   // Wynik pochodnej
+        .sample_valid_out (data_ready_diff)  // Impuls gotowości dla kolejnego bloku
+    );
+
+/*
+     * PAN-TOMPKINS STEP 3: SQUARING
+     * Takes input from Differentiator. Output is 32-bit unsigned.
+    */
+    squarer u_squarer (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .sample_valid_in  (data_ready_diff), // Impuls z derywatora
+        .data_in          (diff_data_out),   // Dane z derywatora (16-bit)
+        .data_out         (sq_data_out),     // Wynik kwadratowania (32-bit)
+        .sample_valid_out (data_ready_sq)    // Impuls dla całkatora
+    );
+
+    /*
+     * PAN-TOMPKINS STEP 4: MOVING WINDOW INTEGRATION
+     * Merges individual sharp spikes into smooth blocks representing QRS complex duration.
+    */
+    moving_window_integration #(
+        .WIDTH_IN(32),
+        .WINDOW_SIZE(75)
+    ) u_moving_window_integration (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .sample_valid_in  (data_ready_sq),   // Impuls z kwadratowania
+        .data_in          (sq_data_out),     // Dane z kwadratowania (32-bit)
+        .data_out         (mwi_data_out),    // Wynik całkowania (39-bit)
+        .sample_valid_out (data_ready_mwi)   // Impuls gotowości dla bloku detekcji progu
+    );
+
+    /*
+     * PAN-TOMPKINS STEP 5: ADAPTIVE THRESHOLD
+     * Determines the exact moment of the R-peak using dynamic thresholds.
+    */
+    adaptive_threshold #(
+        .WIDTH_IN(39),
+        .BLANKING_PERIOD(100)
+    ) u_adaptive_threshold (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .sample_valid_in  (data_ready_mwi),     // Impuls z całkowania
+        .data_in          (mwi_data_out),       // Sygnał 39-bitowy z całkowania
+        .r_peak_detected  (r_peak_detected_pulse) // IMPULS WYJŚCIOWY - ZNALEZIONO R!
+    );
+
+    /*
+     * BPM CALCULATOR
+     * Calculates Heart Rate based on the time distance between R-peaks.
+    */
+    bpm_calculator u_bpm_calculator (
+        .clk             (clk_100MHz),
+        .rst_n           (rst_n),
+        .sample_tick     (start_sampling),        // Impuls 500 Hz z timera
+        .r_peak_detected (r_peak_detected_pulse), // Wynik algorytmu Pan-Tompkinsa
+        .bpm             (current_bpm),           // 8-bitowy wynik (do wyświetlenia)
+        .bpm_valid       (bpm_updated)            // Flaga nowej wartości
+    );
+
+    // ==========================================
+    // KALKULATOR TĘTNA (BPM)
+    // ==========================================
+    bpm_calculator u_bpm_calculator (
+        .clk(clk),
+        .rst_n(rst_n), 
+        
+        // Tyknięcie 500 Hz (podmień nazwę na tę, która wychodzi z Twojego sampling_timer.sv)
+        .sample_tick(sample_valid_500Hz), 
+        
+        // Impuls piku R (podmień nazwę na tę, która wychodzi z adaptive_threshold)
+        .r_peak_detected(r_peak_wire), 
+        
+        .bpm(current_bpm),
+        .bpm_valid(bpm_valid)
+    );
 
 endmodule
