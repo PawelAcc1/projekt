@@ -43,12 +43,12 @@ set sv_files {
     ../rtl/baseline_restore.sv
     ../rtl/vga_formatter.sv
     ../rtl/render_signal.sv
+    ../rtl/draw_mouse.sv
     ../rtl/vga_if.sv
     ../rtl/adaptive_threshold.sv
     ../rtl/alarm_logger.sv
     ../rtl/bpm_calculator.sv
     ../rtl/differentiator.sv
-    ../rtl/draw_mouse.sv
     ../rtl/moving_window_integration.sv
     ../rtl/rtc_clock.sv
     ../rtl/squarer.sv
@@ -78,6 +78,6 @@ set vhdl_files {
 }
 
 # Specify files for a memory initialization     -- EDIT
-set mem_files {
-    ../rtl/bpm_rom.hex
-}
+# set mem_files {
+#    path/to/file.data
+# }

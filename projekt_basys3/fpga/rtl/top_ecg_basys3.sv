@@ -61,6 +61,8 @@ module top_ecg_basys3 (
     top_ecg u_top_ecg (
         .clk_100MHz(clk_100MHz),
         .clk_65MHz(clk_65MHz),
+        .ps2_clk(PS2Clk),
+        .ps2_data(PS2Data),
         .rst_n(!btnC & locked),
         .ps2_clk(PS2Clk),
         .ps2_data(PS2Data),
