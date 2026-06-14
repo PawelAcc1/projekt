@@ -1,8 +1,9 @@
-// top_ecg.sv
 module top_ecg (
         input  logic clk_100MHz,
         input  logic clk_65MHz,
         input  logic rst_n,
+        inout  logic ps2_clk,
+        inout  logic ps2_data,
         inout wire i2c_sda,
         output wire i2c_scl,
         output logic vs,
@@ -26,18 +27,33 @@ module top_ecg (
     wire [15:0] filtered_data_0; //after bandpass fir filter
     wire [15:0] filtered_data_1; //after notch fir filter
     wire [15:0] data_baseline;
-    wire [11:0] display_data; 
+    wire [11:0] display_data;
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
     wire [15:0] ecg_data_received;
 
+    // Pan-Tompkins pipeline signals
+    wire signed [15:0] diff_data_out;       // Differentiator output (16-bit signed)
+    wire               data_ready_diff;
+    wire        [31:0] sq_data_out;         // Squarer output (32-bit unsigned)
+    wire               data_ready_sq;
+    wire        [38:0] mwi_data_out;        // Moving window integration output (39-bit)
+    wire               data_ready_mwi;
+    wire               r_peak_detected_pulse;
+
+    // BPM calculator signals
+    wire        [7:0]  current_bpm;         // 8-bitowy wynik tętna
+    wire               bpm_updated;         // Flaga nowej wartości BPM
+
     vga_if if_tim();
     vga_if if_grid();
     vga_if if_render();
+    vga_if if_ui();
+    vga_if if_mouse();
 
-    assign vs = if_render.vsync;
-    assign hs = if_render.hsync;
-    assign {r,g,b} = if_render.rgb; //zmienic na rect na render
+    assign vs = if_mouse.vsync;
+    assign hs = if_mouse.hsync;
+    assign {r,g,b} = if_mouse.rgb;
 
     /*
      * INSTANCES OF MODULES
@@ -45,7 +61,7 @@ module top_ecg (
     vga_timing u_vga_timing (
         .clk     (clk_65MHz),
         .rst_n   (rst_n),
-        .vga_out (if_tim) 
+        .vga_out (if_tim)
     );
 
     draw_grid u_draw_grid (
@@ -138,5 +154,123 @@ module top_ecg (
         .read_address(read_address)
     );
 
+    // ... poprzedni kod render_signal ...
+
+    // Odbiór danych z kontrolera myszy PS/2
+    wire [11:0] mouse_x_pos;
+    wire [11:0] mouse_y_pos;
+    wire mouse_left_click;
+
+    MouseCtl u_mouse_ctl (
+        .clk(clk_100MHz),       // Zegar 100MHz dla PS/2
+        .rst(~rst_n),           // Uwaga: MouseCtl wymaga resetu w stanie wysokim
+        .xpos(mouse_x_pos),
+        .ypos(mouse_y_pos),
+        .zpos(),
+        .left(mouse_left_click),
+        .middle(),
+        .right(),
+        .new_event(),
+        .value(12'b0),
+        .setx(1'b0),
+        .sety(1'b0),
+        .setmax_x(1'b0),
+        .setmax_y(1'b0),
+        .ps2_clk(ps2_clk),      // Dodaj ps2_clk do portów we/wy na górze top_ecg!
+        .ps2_data(ps2_data)     // Dodaj ps2_data do portów we/wy na górze top_ecg!
+    );
+
+/*
+     * PAN-TOMPKINS STEP 2: DIFFERENTIATOR
+     * Takes input directly from FIR Bandpass
+    */
+    differentiator u_differentiator (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .sample_valid_in  (data_filtered_0), // Impuls z filtru Bandpass
+        .data_in          (filtered_data_0), // Dane z filtru Bandpass
+        .data_out         (diff_data_out),   // Wynik pochodnej
+        .sample_valid_out (data_ready_diff)  // Impuls gotowości dla kolejnego bloku
+    );
+
+/*
+     * PAN-TOMPKINS STEP 3: SQUARING
+     * Takes input from Differentiator. Output is 32-bit unsigned.
+    */
+    squarer u_squarer (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .sample_valid_in  (data_ready_diff), // Impuls z derywatora
+        .data_in          (diff_data_out),   // Dane z derywatora (16-bit)
+        .data_out         (sq_data_out),     // Wynik kwadratowania (32-bit)
+        .sample_valid_out (data_ready_sq)    // Impuls dla całkatora
+    );
+
+    /*
+     * PAN-TOMPKINS STEP 4: MOVING WINDOW INTEGRATION
+     * Merges individual sharp spikes into smooth blocks representing QRS complex duration.
+    */
+    moving_window_integration #(
+        .WIDTH_IN(32),
+        .WINDOW_SIZE(75)
+    ) u_moving_window_integration (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .sample_valid_in  (data_ready_sq),   // Impuls z kwadratowania
+        .data_in          (sq_data_out),     // Dane z kwadratowania (32-bit)
+        .data_out         (mwi_data_out),    // Wynik całkowania (39-bit)
+        .sample_valid_out (data_ready_mwi)   // Impuls gotowości dla bloku detekcji progu
+    );
+
+    /*
+     * PAN-TOMPKINS STEP 5: ADAPTIVE THRESHOLD
+     * Determines the exact moment of the R-peak using dynamic thresholds.
+    */
+    adaptive_threshold #(
+        .WIDTH_IN(39),
+        .BLANKING_PERIOD(100)
+    ) u_adaptive_threshold (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .sample_valid_in  (data_ready_mwi),     // Impuls z całkowania
+        .data_in          (mwi_data_out),       // Sygnał 39-bitowy z całkowania
+        .r_peak_detected  (r_peak_detected_pulse) // IMPULS WYJŚCIOWY - ZNALEZIONO R!
+    );
+
+    /*
+     * BPM CALCULATOR
+     * Calculates Heart Rate based on the time distance between R-peaks.
+    */
+    bpm_calculator u_bpm_calculator (
+        .clk             (clk_100MHz),
+        .rst_n           (rst_n),
+        .sample_tick     (start_sampling),        // Impuls 500 Hz z timera
+        .r_peak_detected (r_peak_detected_pulse), // Wynik algorytmu Pan-Tompkinsa
+        .bpm             (current_bpm),           // 8-bitowy wynik (do wyświetlenia)
+        .bpm_valid       (bpm_updated)            // Flaga nowej wartości
+    );
+
+    vga_ui_manager u_vga_ui (
+        .clk_65MHz(clk_65MHz),      
+        .clk_100MHz(clk_100MHz),    
+        .rst_n(rst_n),
+        .current_bpm(current_bpm),
+        .bpm_valid(bpm_updated),    
+        .mouse_x(mouse_x_pos),
+        .mouse_y(mouse_y_pos),
+        .mouse_left(mouse_left_click),
+        .vga_in(if_render),          
+        .vga_out(if_ui)              
+    );
+
+    // --- NAKŁADANIE KURSORA MYSZKI (Najwyższa warstwa) ---
+    draw_mouse u_mouse_cursor (
+        .clk(clk_65MHz),
+        .rst_n(rst_n),
+        .x_start(mouse_x_pos),
+        .y_start(mouse_y_pos),
+        .vga_in(if_ui),       // Pobiera gotowy obraz z okienkami
+        .vga_out(if_mouse)    // Wyrzuca ostateczny obraz z nałożonym kursorem na monitor
+    );
 
 endmodule
