@@ -20,8 +20,8 @@ module bpm_calculator (
         $readmemh("../../rtl/bpm_rom.hex", bpm_rom);
     end
 
-    // --- Rejestry do uśredniania (Moving Average) ---
-    logic [7:0] bpm_history [0:3];
+    // --- Rejestry do uśredniania (Moving Average na 10 próbek) ---
+    logic [7:0] bpm_history [0:9];
     
     // Zmienna pomocnicza (kombinacyjna) na odczyt z ROM
     logic [7:0] current_bpm_raw;
@@ -32,7 +32,7 @@ module bpm_calculator (
             sample_count <= '0;
             bpm <= '0;
             bpm_valid <= 1'b0;
-            for (int i = 0; i < 4; i++) bpm_history[i] <= '0;
+            for (int i = 0; i < 10; i++) bpm_history[i] <= '0;
         end 
         else begin
             bpm_valid <= 1'b0; 
@@ -48,14 +48,18 @@ module bpm_calculator (
             if (r_peak_detected) begin
                 if (sample_count > 150 && sample_count <= 2000) begin
                     
-                    // Aktualizacja historii tętna
+                    // Aktualizacja historii tętna - przesunięcie całej tablicy
+                    for (int i = 9; i > 0; i--) begin
+                        bpm_history[i] <= bpm_history[i-1];
+                    end
                     bpm_history[0] <= current_bpm_raw;
-                    bpm_history[1] <= bpm_history[0];
-                    bpm_history[2] <= bpm_history[1];
-                    bpm_history[3] <= bpm_history[2];
 
-                    // Obliczenie średniej: wymuszamy 10-bitowe dodawanie
-                    bpm <= (10'(current_bpm_raw) + 10'(bpm_history[0]) + 10'(bpm_history[1]) + 10'(bpm_history[2])) >> 2;
+                    // Obliczenie średniej z 10 pomiarów (wymuszamy 12-bitowe dodawanie, aby uniknąć przepełnienia)
+                    // Sumujemy bieżący odczyt oraz 9 poprzednich z historii
+                    bpm <= (12'(current_bpm_raw) + 
+                            12'(bpm_history[0]) + 12'(bpm_history[1]) + 12'(bpm_history[2]) + 
+                            12'(bpm_history[3]) + 12'(bpm_history[4]) + 12'(bpm_history[5]) + 
+                            12'(bpm_history[6]) + 12'(bpm_history[7]) + 12'(bpm_history[8])) / 10;
                     
                     bpm_valid <= 1'b1;
                 end
@@ -70,7 +74,7 @@ module bpm_calculator (
                 bpm_valid <= 1'b1; 
                 
                 // Resetujemy historię, żeby przywrócenie sygnału nie uśredniało się z zerami
-                for (int i = 0; i < 4; i++) bpm_history[i] <= '0;
+                for (int i = 0; i < 10; i++) bpm_history[i] <= '0;
                 
                 // Zatrzymujemy licznik
                 sample_count <= 11'd2047; 
