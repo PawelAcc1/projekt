@@ -54,14 +54,21 @@ module vga_ui_manager (
         .days(rtc_days), .months(rtc_months)
     );
 
-    // --- HISTORIA ---
+   // --- HISTORIA ---
     logic history_pixel;
     alarm_logger u_logger (
-        .clk_100MHz(clk_100MHz), .rst_n(rst_n),
-        .rtc_hours(rtc_hours), .rtc_minutes(rtc_minutes),
-        .current_bpm(current_bpm), .bpm_valid(bpm_valid),
-        .hcount(vga_in.hcount), .vcount(vga_in.vcount),
+        .clk_100MHz(clk_100MHz), 
+        .clk_65MHz(clk_65MHz), // DODANE: Zegar do czcionki
+        .rst_n(rst_n),
+        .rtc_hours(rtc_hours), 
+        .rtc_minutes(rtc_minutes),
+        .rtc_seconds(rtc_seconds), // DODANE: Przekazanie sekund do logów
+        .current_bpm(current_bpm), 
+        .bpm_valid(bpm_valid),
+        .hcount(vga_in.hcount), 
+        .vcount(vga_in.vcount),
         .show_history(current_state == STATE_HISTORY),
+        .show_monitor(current_state == STATE_MONITOR), // DODANE: Logi na ekranie głównym
         .pixel_on(history_pixel)
     );
 
