@@ -10,7 +10,7 @@ import os
 
 fs = 500.0  # Częstotliwość próbkowania w Hz
 nyq = 0.5 * fs  # Częstotliwość Nyquista
-f_cutoff = [48, 52] # Częstotliwość do obrazowania ekg
+f_cutoff = [42, 58] # Częstotliwość do obrazowania ekg
 
 num_taps = 301 # liczba odprowadzeń
 
@@ -22,7 +22,7 @@ bandpass_coeffs = signal.firwin(
     numtaps=num_taps,
     cutoff=f_cutoff,
     fs=fs,
-    window='hamming',
+    window='blackmanharris',
     pass_zero='bandstop'
 )
 
