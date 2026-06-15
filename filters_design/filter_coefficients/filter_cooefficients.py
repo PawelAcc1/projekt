@@ -10,7 +10,11 @@ import os
 
 fs = 500.0  # Częstotliwość próbkowania w Hz
 nyq = 0.5 * fs  # Częstotliwość Nyquista
+<<<<<<< HEAD
 f_cutoff = [42, 58] # Częstotliwość do obrazowania ekg
+=======
+f_cutoff = [40, 60] # Częstotliwość do obrazowania ekg
+>>>>>>> 4a62a48ef03fa3182e7f31de7e594ae5a1981f3d
 
 num_taps = 301 # liczba odprowadzeń
 
