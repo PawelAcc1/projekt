@@ -64,8 +64,6 @@ module top_ecg_basys3 (
         .ps2_clk(PS2Clk),
         .ps2_data(PS2Data),
         .rst_n(!btnC & locked),
-        .ps2_clk(PS2Clk),
-        .ps2_data(PS2Data),
         .i2c_sda(JA[3]),
         .i2c_scl(JA[2]),
         .vs(Vsync),

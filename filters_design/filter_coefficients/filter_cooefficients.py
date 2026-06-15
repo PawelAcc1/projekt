@@ -1,4 +1,4 @@
-import numpy as np
+
 import scipy.signal as signal
 import matplotlib.pyplot as plt
 from math import pi
@@ -37,7 +37,7 @@ bandpass_coeffs_fpga = np.round(bandpass_coeffs * skala_fpga).astype(int)
 # 4. ZAPIS WSPÓŁCZYNNIKÓW DO PLIKU .COE
 # ==========================================
 #lokalizacja pliku ze wspolczynnikami
-file_path = r"C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fir_compiler_notch" # r - raw string - python ignoruje znaki specjalne
+file_path = r"C:\Users\48509\Desktop\UEC2_Projekt\projekt\projekt_basys3\fir_compiler_notch" # r - raw string - python ignoruje znaki specjalne
 file_name = "bandstop_coeffs.coe"
 full_path = os.path.join(file_path, file_name) # concatenation of file path and file name
 

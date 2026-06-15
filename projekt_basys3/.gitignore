@@ -13,6 +13,7 @@ fpga/xvlog*
 fpga/xelab*
 fpga/xsim*
 fpga/.hbs
+fpga/*.xci
 
 sim/build
 sim/.Xil

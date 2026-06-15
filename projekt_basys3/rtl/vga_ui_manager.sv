@@ -106,6 +106,10 @@ module vga_ui_manager (
     );
 
     // --- CYFROWE WYŚWIETLACZE (7-SEG) ---
+    logic [11:0] hcount, vcount;
+    assign hcount = vga_in.hcount;
+    assign vcount = vga_in.vcount;
+
     logic main_time_p [5:0]; logic main_time_pixel;
     logic main_date_p [3:0]; logic main_date_pixel;
     logic setup_time_p [3:0]; logic setup_time_pixel;
@@ -145,7 +149,7 @@ module vga_ui_manager (
     vga_7seg_digit #(.POS_X(650), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) s_mo1 (.digit_val(setup_mon%10), .* , .pixel_on(setup_date_p[3]));
     logic setup_dot = (vga_in.hcount >= 601 && vga_in.hcount <= 605 && vga_in.vcount >= 322 && vga_in.vcount <= 326);
     assign setup_date_pixel = (current_state == STATE_SETUP) && (setup_date_p[0] | setup_date_p[1] | setup_date_p[2] | setup_date_p[3] | setup_dot);
-
+    
     // --- ZNAKI PLUS I MINUS (Bezpośrednie Rysowanie Pikseli) ---
     logic draw_pm_text;
     always_comb begin

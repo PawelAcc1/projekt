@@ -1,7 +1,7 @@
 module vga_formatter #(
     parameter int IN_WIDTH    = 16, // szerokość słowa z FIR (signed)
     parameter int OUT_WIDTH   = 12, // szerokość danych bufora/wyświetlania (unsigned)
-    parameter int GAIN_LSHIFT = 3  // wzmocnienie składowej zmiennej (x 2^GAIN); 4 = x16
+    parameter int GAIN_LSHIFT = 4  // wzmocnienie składowej zmiennej (x 2^GAIN); 4 = x16
 )(
     input  logic clk,
     input  logic rst_n,
