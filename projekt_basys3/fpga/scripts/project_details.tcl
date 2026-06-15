@@ -45,6 +45,16 @@ set sv_files {
     ../rtl/render_signal.sv
     ../rtl/draw_mouse.sv
     ../rtl/vga_if.sv
+    ../rtl/adaptive_threshold.sv
+    ../rtl/alarm_logger.sv
+    ../rtl/bpm_calculator.sv
+    ../rtl/differentiator.sv
+    ../rtl/moving_window_integration.sv
+    ../rtl/rtc_clock.sv
+    ../rtl/squarer.sv
+    ../rtl/vga_7seg_digit.sv
+    ../rtl/vga_bpm_display.sv
+    ../rtl/vga_ui_manager.sv
     rtl/top_ecg_basys3.sv
 }
 
@@ -62,9 +72,9 @@ set ip_core_files {
 
 # Specify VHDL design files location            -- EDIT
 set vhdl_files {
-   ../rtl/Ps2Interface.vhd
    ../rtl/MouseCtl.vhd
    ../rtl/MouseDisplay.vhd
+   ../rtl/Ps2Interface.vhd
 }
 
 # Specify files for a memory initialization     -- EDIT

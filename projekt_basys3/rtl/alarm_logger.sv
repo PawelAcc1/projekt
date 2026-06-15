@@ -65,6 +65,9 @@ module alarm_logger (
     logic [3:0] pixel_b2;
     logic [3:0] pixel_b3;
 
+    //
+    logic dash;
+
     // Automatyczne wygenerowanie 4 wierszy tekstu na ekranie
     genvar k;
     generate

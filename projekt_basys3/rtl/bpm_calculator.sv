@@ -16,8 +16,9 @@ module bpm_calculator (
     // --- Pamięć ROM (Look-Up Table) ---
     logic [7:0] bpm_rom [0:2047];
     initial begin
-        // Wychodzimy dwa foldery wyżej (../../) i wchodzimy do rtl/
-        $readmemh("../../rtl/bpm_rom.hex", bpm_rom);
+        // Plik dodany do projektu przez read_mem (mem_files w project_details.tcl),
+        // dzięki czemu Vivado znajduje go po samej nazwie zarówno w syntezie, jak i symulacji.
+        $readmemh("bpm_rom.hex", bpm_rom);
     end
 
     // --- Rejestry do uśredniania (Moving Average na 10 próbek) ---

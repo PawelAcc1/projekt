@@ -1,4 +1,3 @@
-// top_ecg.sv
 module top_ecg (
         input  logic clk_100MHz,
         input  logic clk_65MHz,
@@ -28,10 +27,23 @@ module top_ecg (
     wire [15:0] filtered_data_0; //after bandpass fir filter
     wire [15:0] filtered_data_1; //after notch fir filter
     wire [15:0] data_baseline;
-    wire [11:0] display_data; 
+    wire [11:0] display_data;
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
     wire [15:0] ecg_data_received;
+
+    // Pan-Tompkins pipeline signals
+    wire signed [15:0] diff_data_out;       // Differentiator output (16-bit signed)
+    wire               data_ready_diff;
+    wire        [31:0] sq_data_out;         // Squarer output (32-bit unsigned)
+    wire               data_ready_sq;
+    wire        [38:0] mwi_data_out;        // Moving window integration output (39-bit)
+    wire               data_ready_mwi;
+    wire               r_peak_detected_pulse;
+
+    // BPM calculator signals
+    wire        [7:0]  current_bpm;         // 8-bitowy wynik tętna
+    wire               bpm_updated;         // Flaga nowej wartości BPM
 
     vga_if if_tim();
     vga_if if_grid();
@@ -49,7 +61,7 @@ module top_ecg (
     vga_timing u_vga_timing (
         .clk     (clk_65MHz),
         .rst_n   (rst_n),
-        .vga_out (if_tim) 
+        .vga_out (if_tim)
     );
 
     draw_grid u_draw_grid (
@@ -240,10 +252,10 @@ module top_ecg (
 
     vga_ui_manager u_vga_ui (
         .clk_65MHz(clk_65MHz),      
-        .clk_100MHz(clk_100MHz),     
+        .clk_100MHz(clk_100MHz),    
         .rst_n(rst_n),
         .current_bpm(current_bpm),
-        .bpm_valid(bpm_updated),     
+        .bpm_valid(bpm_updated),    
         .mouse_x(mouse_x_pos),
         .mouse_y(mouse_y_pos),
         .mouse_left(mouse_left_click),
