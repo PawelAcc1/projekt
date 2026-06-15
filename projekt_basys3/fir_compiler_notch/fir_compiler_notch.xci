@@ -3,15 +3,16 @@
   "ip_inst": {
     "xci_name": "fir_compiler_notch",
     "component_reference": "xilinx.com:ip:fir_compiler:7.2",
-    "ip_revision": "24",
+    "ip_revision": "26",
     "gen_directory": "../../../../ecg_project.gen/sources_1/ip/fir_compiler_notch",
     "parameters": {
       "component_parameters": {
         "Component_Name": [ { "value": "fir_compiler_notch", "resolve_type": "user", "usage": "all" } ],
         "GUI_Behaviour": [ { "value": "Coregen", "resolve_type": "user", "usage": "all" } ],
         "CoefficientSource": [ { "value": "COE_File", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
+        "DataCoefficientType": [ { "value": "Real", "resolve_type": "user", "usage": "all" } ],
         "CoefficientVector": [ { "value": "6,0,-4,-3,5,6,-6,-13,7,44,64,44,7,-13,-6,6,5,-3,-4,0,6", "resolve_type": "user", "usage": "all" } ],
-        "Coefficient_File": [ { "value": "bandstop_coeffs.coe", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
+        "Coefficient_File": [ { "value": "bandpass_coeffs.coe", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "Coefficient_Sets": [ { "value": "1", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "Coefficient_Reload": [ { "value": "false", "resolve_type": "user", "format": "bool", "usage": "all" } ],
         "Filter_Type": [ { "value": "Single_Rate", "resolve_type": "user", "usage": "all" } ],
@@ -78,6 +79,7 @@
         "Has_ARESETn": [ { "value": "false", "resolve_type": "user", "format": "bool", "usage": "all" } ],
         "Reset_Data_Vector": [ { "value": "true", "resolve_type": "user", "format": "bool", "usage": "all" } ],
         "Blank_Output": [ { "value": "false", "resolve_type": "user", "format": "bool", "usage": "all" } ],
+        "Reset_Coeff_Vector": [ { "value": "false", "resolve_type": "user", "format": "bool", "usage": "all" } ],
         "Gen_MIF_from_Spec": [ { "value": "false", "resolve_type": "user", "format": "bool", "usage": "all" } ],
         "Gen_MIF_from_COE": [ { "value": "false", "resolve_type": "user", "format": "bool", "usage": "all" } ],
         "Reload_File": [ { "value": "no_coe_file_loaded", "resolve_type": "user", "usage": "all" } ],
@@ -95,6 +97,7 @@
         "C_COMPONENT_NAME": [ { "value": "fir_compiler_notch", "resolve_type": "generated", "usage": "all" } ],
         "C_COEF_FILE": [ { "value": "fir_compiler_notch.mif", "resolve_type": "generated", "usage": "all" } ],
         "C_COEF_FILE_LINES": [ { "value": "151", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "C_DATA_COEFFICIENT_TYPE": [ { "value": "0", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_FILTER_TYPE": [ { "value": "0", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_INTERP_RATE": [ { "value": "1", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_DECIM_RATE": [ { "value": "1", "resolve_type": "generated", "format": "long", "usage": "all" } ],
@@ -122,10 +125,10 @@
         "C_PX_PATH_SRC": [ { "value": "0", "resolve_type": "generated", "usage": "all" } ],
         "C_DATA_PATH_SIGN": [ { "value": "0", "resolve_type": "generated", "usage": "all" } ],
         "C_COEF_PATH_SIGN": [ { "value": "0", "resolve_type": "generated", "usage": "all" } ],
-        "C_ACCUM_PATH_WIDTHS": [ { "value": "33", "resolve_type": "generated", "usage": "all" } ],
+        "C_ACCUM_PATH_WIDTHS": [ { "value": "32", "resolve_type": "generated", "usage": "all" } ],
         "C_OUTPUT_WIDTH": [ { "value": "16", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_OUTPUT_PATH_WIDTHS": [ { "value": "16", "resolve_type": "generated", "usage": "all" } ],
-        "C_ACCUM_OP_PATH_WIDTHS": [ { "value": "33", "resolve_type": "generated", "usage": "all" } ],
+        "C_ACCUM_OP_PATH_WIDTHS": [ { "value": "32", "resolve_type": "generated", "usage": "all" } ],
         "C_EXT_MULT_CNFG": [ { "value": "none", "resolve_type": "generated", "usage": "all" } ],
         "C_DATA_PATH_PSAMP_SRC": [ { "value": "0", "resolve_type": "generated", "usage": "all" } ],
         "C_OP_PATH_PSAMP_SRC": [ { "value": "0", "resolve_type": "generated", "usage": "all" } ],
@@ -162,26 +165,26 @@
         "C_RELOAD_TDATA_WIDTH": [ { "value": "1", "resolve_type": "generated", "format": "long", "usage": "all" } ]
       },
       "project_parameters": {
-        "ARCHITECTURE": [ { "value": "artix7" } ],
-        "BASE_BOARD_PART": [ { "value": "" } ],
-        "BOARD_CONNECTIONS": [ { "value": "" } ],
-        "DEVICE": [ { "value": "xc7a35t" } ],
-        "PACKAGE": [ { "value": "cpg236" } ],
-        "PREFHDL": [ { "value": "VERILOG" } ],
-        "SILICON_REVISION": [ { "value": "" } ],
-        "SIMULATOR_LANGUAGE": [ { "value": "MIXED" } ],
-        "SPEEDGRADE": [ { "value": "-1" } ],
-        "STATIC_POWER": [ { "value": "" } ],
-        "TEMPERATURE_GRADE": [ { "value": "" } ]
+        "ARCHITECTURE": [ { "value": "artix7", "resolve_type": "generated", "usage": "all" } ],
+        "BASE_BOARD_PART": [ { "value": "", "resolve_type": "generated", "usage": "all" } ],
+        "BOARD_CONNECTIONS": [ { "value": "", "resolve_type": "generated", "usage": "all" } ],
+        "DEVICE": [ { "value": "xc7a35t", "resolve_type": "generated", "usage": "all" } ],
+        "PACKAGE": [ { "value": "cpg236", "resolve_type": "generated", "usage": "all" } ],
+        "PREFHDL": [ { "value": "VERILOG", "resolve_type": "generated", "usage": "all" } ],
+        "SILICON_REVISION": [ { "value": "", "resolve_type": "generated", "usage": "all" } ],
+        "SIMULATOR_LANGUAGE": [ { "value": "MIXED", "resolve_type": "generated", "usage": "all" } ],
+        "SPEEDGRADE": [ { "value": "-1", "resolve_type": "generated", "usage": "all" } ],
+        "STATIC_POWER": [ { "value": "", "resolve_type": "generated", "usage": "all" } ],
+        "TEMPERATURE_GRADE": [ { "value": "", "resolve_type": "generated", "usage": "all" } ]
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Flow" } ],
-        "IPREVISION": [ { "value": "24" } ],
+        "IPREVISION": [ { "value": "26" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "../../../../ecg_project.gen/sources_1/ip/fir_compiler_notch" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "." } ],
-        "SWVERSION": [ { "value": "2025.1" } ],
+        "SWVERSION": [ { "value": "2025.2" } ],
         "SYNTHESISFLOW": [ { "value": "OUT_OF_CONTEXT" } ]
       }
     },
@@ -345,5 +348,6 @@
         }
       }
     }
-  }
+  },
+  "checksum": "50f63ce1"
 }

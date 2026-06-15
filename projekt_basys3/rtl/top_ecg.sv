@@ -45,6 +45,15 @@ module top_ecg (
     wire        [7:0]  current_bpm;         // 8-bitowy wynik tętna
     wire               bpm_updated;         // Flaga nowej wartości BPM
 
+    // Delay buffers connections
+    wire signed [15:0] deriv_data_buff;
+    wire signed [15:0] ecg_data_buff;
+    wire deriv_valid_out_buff;
+    wire ecg_valid_out_buff;
+
+    //STEMI alarm connection
+    wire stemi_alarm;
+
     vga_if if_tim();
     vga_if if_grid();
     vga_if if_render();
@@ -187,8 +196,8 @@ module top_ecg (
     differentiator u_differentiator (
         .clk              (clk_100MHz),
         .rst_n            (rst_n),
-        .sample_valid_in  (data_filtered_0), // Impuls z filtru Bandpass
-        .data_in          (filtered_data_0), // Dane z filtru Bandpass
+        .sample_valid_in  (data_ready_notch), // Impuls z filtru Bandpass
+        .data_in          (filtered_data_1), // Dane z filtru Bandpass
         .data_out         (diff_data_out),   // Wynik pochodnej
         .sample_valid_out (data_ready_diff)  // Impuls gotowości dla kolejnego bloku
     );
@@ -250,6 +259,57 @@ module top_ecg (
         .bpm_valid       (bpm_updated)            // Flaga nowej wartości
     );
 
+    /*
+     * DERIVATIVE DELAY BUFFER
+     * Synchronize signals with PAN_TOMPKINS algorithm to STEMI detector.
+     * Pipeline latency = 4 cycles
+     * Algorithm delay = 40 cycles
+     * Combined delay = 44 cycles
+    */
+    delay_buffer #(
+        .DELAY(44)
+    ) u_delay_buffer_deriv (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .data_in          (diff_data_out),
+        .sample_valid_in  (data_ready_diff),
+        .data_out         (deriv_data_buff),
+        .sample_valid_out (deriv_valid_out_buff)
+    );
+
+    /*
+     * ECG DATA DELAY BUFFER
+     * Synchronize signals with PAN_TOMPKINS algorithm to STEMI detector.
+     * Pipeline latency = 5 cycles (include differentiator!)
+     * Algorithm delay = 40 cycles
+     * Combined delay = 45 cycles
+    */
+   delay_buffer #(
+        .DELAY(45)
+    ) u_delay_buffer_ecg (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .data_in          (filtered_data_1),
+        .sample_valid_in  (data_ready_notch),
+        .data_out         (ecg_data_buff),
+        .sample_valid_out (ecg_valid_out_buff)
+    );
+
+    /*
+     * STEMI DETECTOR
+     * Detect ST-Elevation Myocardial Infarction
+    */
+    stemi_detector u_stemi_detector (
+        .clk              (clk_100MHz),
+        .rst_n            (rst_n),
+        .ecg_data_in      (ecg_data_buff),
+        .derivative_data_in (deriv_data_buff),
+        .data_sample_valid_in (ecg_valid_out_buff),
+        .derivative_sample_valid_in(deriv_valid_out_buff),
+        .r_peak_detected  (r_peak_detected_pulse),
+        .stemi_alarm      (stemi_alarm)
+    );
+
     vga_ui_manager u_vga_ui (
         .clk_65MHz(clk_65MHz),      
         .clk_100MHz(clk_100MHz),    
@@ -259,6 +319,7 @@ module top_ecg (
         .mouse_x(mouse_x_pos),
         .mouse_y(mouse_y_pos),
         .mouse_left(mouse_left_click),
+        .stemi_alarm(stemi_alarm),
         .vga_in(if_render),          
         .vga_out(if_ui)              
     );

@@ -15,6 +15,9 @@ module alarm_logger (
     input  logic [11:0] vcount,
     input  logic show_history,  // Ekran Historia
     input  logic show_monitor,  // Ekran Monitor
+
+    input logic stemi_alarm,
+
     output logic pixel_on
 );
 
@@ -29,27 +32,35 @@ module alarm_logger (
     assign is_brady      = (current_bpm > 0 && current_bpm < 8'd50);
     assign is_tachy      = (current_bpm > 8'd100);
     assign is_arrhythmia = (bpm_diff > 8'd15 && prev_bpm != 0);
+    assign is_stemi      = (stemi_alarm);
 
-    logic [1:0] current_alarm; // 0=OK, 1=BRADY, 2=TACHY, 3=ARYTMIA
-    assign current_alarm = is_arrhythmia ? 2'd3 : 
-                           is_tachy      ? 2'd2 : 
-                           is_brady      ? 2'd1 : 2'd0;
 
-    // Rejestr poprzedniego uderzenia
-    logic [1:0] prev_alarm;
+    logic [2:0] current_alarm; // 0=OK, 1=BRADY, 2=TACHY, 3=ARYTMIA, 4=STEMI
+    assign current_alarm = is_stemi      ? 3'd4 : 
+                           is_arrhythmia ? 3'd3 : 
+                           is_tachy      ? 3'd2 : 
+                           is_brady      ? 3'd1 : 3'd0;
+
+    // --- REJESTRY ŚLEDZĄCE ---
+    logic [2:0] prev_alarm;
+    
     always_ff @(posedge clk_100MHz or negedge rst_n) begin
         if (!rst_n) begin
             prev_bpm <= 8'd0;
-            prev_alarm <= 2'd0;
-        end else if (bpm_valid) begin
-            prev_bpm <= current_bpm;
-            prev_alarm <= current_alarm;
+            prev_alarm <= 3'd0;
+        end else begin
+            if (bpm_valid) begin
+                prev_bpm <= current_bpm;
+            end
+            
+            prev_alarm <= current_alarm; 
         end
     end
 
-    // Alarm wyzwala się TYLKO, gdy stan pacjenta zmienia się na nieprawidłowy 
+    // --- GENERATOR IMPULSU ZAPISU (Edge Detection) ---
     logic trigger_log;
-    assign trigger_log = bpm_valid && (current_alarm != 2'd0) && (current_alarm != prev_alarm);
+    
+    assign trigger_log = (current_alarm != prev_alarm) && (current_alarm != 3'd0);
 
     // --- PRZYGOTOWANIE TEKSTU DLA CZCIONKI (Kodowanie ASCII) ---
     logic [7:0] t_h1, t_h2, t_m1, t_m2, t_s1, t_s2, b1, b2, b3;
@@ -70,6 +81,8 @@ module alarm_logger (
         else if (is_tachy)      str_type = 88'h54414348594B4152444941;
         // "BRADYKARDIA" (11 znaków)
         else if (is_brady)      str_type = 88'h42524144594B4152444941;
+        // "STEMI" (5 znaków uzupelnione spacjami)
+        else if (is_stemi)      str_type = 88'h5354454D49202020202020;
         // Puste 11 spacji
         else                    str_type = 88'h2020202020202020202020;
     end

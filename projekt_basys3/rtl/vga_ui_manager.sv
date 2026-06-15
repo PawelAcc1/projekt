@@ -12,6 +12,8 @@ module vga_ui_manager (
     input  logic [11:0] mouse_y,
     input  logic mouse_left,
 
+    input  logic stemi_alarm,
+
     vga_if.in  vga_in,
     vga_if.out vga_out
 );
@@ -69,7 +71,8 @@ module vga_ui_manager (
         .vcount(vga_in.vcount),
         .show_history(current_state == STATE_HISTORY),
         .show_monitor(current_state == STATE_MONITOR), // DODANE: Logi na ekranie głównym
-        .pixel_on(history_pixel)
+        .pixel_on(history_pixel),
+        .stemi_alarm(stemi_alarm)
     );
 
     logic [11:0] bpm_rgb;

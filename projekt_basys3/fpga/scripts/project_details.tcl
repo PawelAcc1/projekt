@@ -57,6 +57,8 @@ set sv_files {
     ../rtl/vga_ui_manager.sv
     ../rtl/front_rom.sv
     ../rtl/vga_text_renderer.sv
+    ../rtl/delay_buffer.sv
+    ../rtl/stemi_detector.sv
     rtl/top_ecg_basys3.sv
 }
 

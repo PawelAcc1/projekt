@@ -1,4 +1,4 @@
-
+import numpy as np
 import scipy.signal as signal
 import matplotlib.pyplot as plt
 from math import pi
@@ -10,11 +10,7 @@ import os
 
 fs = 500.0  # Częstotliwość próbkowania w Hz
 nyq = 0.5 * fs  # Częstotliwość Nyquista
-<<<<<<< HEAD
-f_cutoff = [42, 58] # Częstotliwość do obrazowania ekg
-=======
-f_cutoff = [40, 60] # Częstotliwość do obrazowania ekg
->>>>>>> 4a62a48ef03fa3182e7f31de7e594ae5a1981f3d
+f_cutoff = [0.5, 40] # Częstotliwość do obrazowania ekg
 
 num_taps = 301 # liczba odprowadzeń
 
@@ -27,7 +23,7 @@ bandpass_coeffs = signal.firwin(
     cutoff=f_cutoff,
     fs=fs,
     window='blackmanharris',
-    pass_zero='bandstop'
+    pass_zero='bandpass'
 )
 
 # ==========================================
@@ -41,8 +37,8 @@ bandpass_coeffs_fpga = np.round(bandpass_coeffs * skala_fpga).astype(int)
 # 4. ZAPIS WSPÓŁCZYNNIKÓW DO PLIKU .COE
 # ==========================================
 #lokalizacja pliku ze wspolczynnikami
-file_path = r"C:\Users\48509\Desktop\UEC2_Projekt\projekt\projekt_basys3\fir_compiler_notch" # r - raw string - python ignoruje znaki specjalne
-file_name = "bandstop_coeffs.coe"
+file_path = r"C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fir_compiler_notch" # r - raw string - python ignoruje znaki specjalne
+file_name = "bandpass_coeffs.coe"
 full_path = os.path.join(file_path, file_name) # concatenation of file path and file name
 
 # format coefficient 
