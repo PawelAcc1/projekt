@@ -57,13 +57,13 @@ module alarm_logger (
 
     // --- LOGIKA GENEROWANIA WIDOKU TABELI ---
     // Tablice przewodów łączące pętlę generate z wyjściami cyfr
-    logic pixel_h1 [3:0];
-    logic pixel_h2 [3:0];
-    logic pixel_m1 [3:0];
-    logic pixel_m2 [3:0];
-    logic pixel_b1 [3:0];
-    logic pixel_b2 [3:0];
-    logic pixel_b3 [3:0];
+    logic [3:0] pixel_h1;
+    logic [3:0] pixel_h2;
+    logic [3:0] pixel_m1;
+    logic [3:0] pixel_m2;
+    logic [3:0] pixel_b1;
+    logic [3:0] pixel_b2;
+    logic [3:0] pixel_b3;
 
     // Automatyczne wygenerowanie 4 wierszy tekstu na ekranie
     genvar k;
@@ -101,22 +101,25 @@ module alarm_logger (
 
     // --- MULTIPLEKSER BIEŻĄCEGO PIKSELA ---
     always_comb begin
+        // Deklaracje zmiennych pomocniczych MUSZĄ być na górze bloku dla Vivado
+        int row_y;
+        logic colon;
+        logic dash;
+
         pixel_on = 1'b0;
         
         if (show_history) begin
             for (int i = 0; i < 4; i++) begin
                 // Rysuj wiersz tylko wtedy, gdy zawiera realne dane (został zapisany)
                 if (i < num_logs) begin
-                    int row_y = 200 + (i * 80);
+                    row_y = 200 + (i * 80);
                     
-                    // Sprzętowy dwukropek między godziną a minutą (dwa małe kwadraciki)
-                    logic colon;
+                    // Sprzętowy dwukropek między godziną a minutą
                     colon = (hcount >= 141 && hcount <= 143 && 
                             ((vcount >= row_y + 8 && vcount <= row_y + 10) || 
                              (vcount >= row_y + 20 && vcount <= row_y + 22)));
                              
                     // Sprzętowy myślnik separatora "HH:MM - BPM"
-                    logic dash;
                     dash = (hcount >= 195 && hcount <= 210 && vcount >= row_y + 14 && vcount <= row_y + 16);
 
                     // Jeśli piksel należy do jakiejkolwiek cyfry lub znaku w tym wierszu
