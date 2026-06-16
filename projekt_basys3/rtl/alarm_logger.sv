@@ -32,7 +32,7 @@ module alarm_logger (
         end
     end
 
-    // --- 2. LEADS-OFF & BLANKING TIMER (8 Sekund) ---
+    // --- 2. LEADS-OFF & BLANKING TIMER (20 Sekund) ---
     logic [29:0] stable_timer;
     logic is_stable; 
 
@@ -45,7 +45,7 @@ module alarm_logger (
             if (leads_sync_2 != 2'b00) begin
                 stable_timer <= '0;
                 is_stable <= 1'b0;
-            end else if (stable_timer < 30'd800_000_000) begin 
+            end else if (stable_timer < 30'd2000_000_000) begin 
                 stable_timer <= stable_timer + 1'b1;
                 is_stable <= 1'b0;
             end else begin

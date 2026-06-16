@@ -33,14 +33,14 @@ module vga_bpm_display (
     // ==========================================
     // 2. NAPIS STATUSU POD SERCEM
     // ==========================================
-    logic [127:0] status_str;
+    logic [143:0] status_str; 
     always_comb begin
         if (leads_off == 2'b00) begin
-            // "PACJENT PODPIETY" (16 znaków)
-            status_str = 128'h5041434A454E5420504F445049455459; 
+            // "ELEKTRODY PODPIETE" (18 znaków)
+            status_str = 144'h454C454B54524F445920504F445049455445; 
         end else begin
-            // "PACJENT ODPIETY " (16 znaków, ze spacją na końcu dla wyrównania)
-            status_str = 128'h5041434A454E54204F44504945545920; 
+            // "ELEKTRODY ODPIETE " (18 znaków, ze spacją na końcu dla wyrównania)
+            status_str = 144'h454C454B54524F4459204F44504945544520; 
         end
     end
 
