@@ -1,6 +1,7 @@
 /*
  * This module provides STEMI detection. STEMI stands for ST-Elevation Myocardial Infarction, which is 
- * ST segment elevation myocardial infarction. This is the most serious and sudden form of heart attack 
+ * ST segment elevation comparing to baseline level
+ * . This is the most serious and sudden form of heart attack 
  * in which the main coronary artery is completely blocked.
  * 
  * To detect such patology we basically measure baseline level during PQ segment, then after R wave peak detection
@@ -13,9 +14,9 @@
 */
 
 module stemi_detector #(
-    parameter STEMI_THRESHOLD = 10,
+    parameter STEMI_THRESHOLD = 10, // alarm sensitivity
     parameter DATA_WIDTH = 16,
-    parameter DERIVATIVE_MARGIN = 5,
+    parameter DERIVATIVE_MARGIN = 5, // flatness of PQ segment margin for baseline tracking
     parameter SAMPLES_TO_J_POINT = 30, // from R peak to J point is 30 samples or 60ms for fs = 500Hz
     parameter SAMPLES_FOR_AVERAGE = 8
 )(
@@ -45,7 +46,7 @@ logic [($clog2(SAMPLES_FOR_AVERAGE)):0] st_samples_counter, st_samples_counter_n
 //accumulator for averaging
 logic signed [(DATA_WIDTH-1)+3:0] st_accumulator, st_accumulator_nxt;
 
-//alarms varaibles
+//alarms variables
 logic stemi_alarm_nxt;
 
 enum logic [2:0] {IDLE, R_DETECTED, J_POINT, EVALUATE} state, state_nxt;

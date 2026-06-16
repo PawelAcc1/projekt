@@ -7,6 +7,8 @@
 # Description:
 # Initialize enviorment for working with the project.
 
+source /c/AMDDesignTools/2025.2/Vivado/settings64.sh
+
 export ROOT_DIR=$(pwd)
 export PATH=tools:${PATH}
 export VIVADO_DIR=$(which vivado | sed "s/bin\/vivado//")
