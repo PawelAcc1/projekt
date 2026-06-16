@@ -15,9 +15,10 @@
 module top_ecg_basys3 (
         input  wire clk,
         input  wire btnC,
-        inout wire [7:2] JA,
-        inout wire PS2Clk,
-        inout wire PS2Data,
+        inout  wire [7:2] JA,
+        input  wire [7:0] JC, // DODANE: Cały port JC dla czujnika
+        inout  wire PS2Clk,
+        inout  wire PS2Data,
         output wire Vsync,
         output wire Hsync,
         output wire [3:0] vgaRed,
@@ -28,25 +29,15 @@ module top_ecg_basys3 (
     timeunit 1ns;
     timeprecision 1ps;
 
-    /**
-     * Local variables for clock
-     */
-
     wire locked;
     wire clk_100MHz;
     wire clk_65MHz;
     
-    /**
-     * Signals assignments
-     */
     assign JA[4] = 1'bz;
     assign JA[5] = 1'bz;
     assign JA[6] = 1'bz;
     assign JA[7] = 1'bz;
 
-    /*
-     * CLOCK IP CORE
-    */
     clk_wiz_0 u_clk_wiz_0 (
         .clk_in1(clk),
         .locked(locked),
@@ -54,16 +45,13 @@ module top_ecg_basys3 (
         .clk65MHz(clk_65MHz)
     );
 
-    /**
-     *  Project functional top module
-     */
-
     top_ecg u_top_ecg (
         .clk_100MHz(clk_100MHz),
         .clk_65MHz(clk_65MHz),
         .ps2_clk(PS2Clk),
         .ps2_data(PS2Data),
         .rst_n(!btnC & locked),
+        .leads_off(JC[1:0]), // DODANE: Podłączenie dwóch pierwszych pinów JC
         .i2c_sda(JA[3]),
         .i2c_scl(JA[2]),
         .vs(Vsync),

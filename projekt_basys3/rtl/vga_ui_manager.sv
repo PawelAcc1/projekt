@@ -6,7 +6,8 @@ module vga_ui_manager (
     input  logic rst_n,
     
     input  logic [7:0] current_bpm,
-    input  logic bpm_valid,     
+    input  logic bpm_valid,
+    input  logic [1:0] leads_off,     
     
     input  logic [11:0] mouse_x,
     input  logic [11:0] mouse_y,
@@ -41,7 +42,7 @@ module vga_ui_manager (
     // --- REJESTRY USTAWIEŃ (Bezpieczne w domenie 65MHz) ---
     logic [4:0] setup_hour; logic [5:0] setup_min;
     logic [4:0] setup_day;  logic [3:0] setup_mon;
-    logic do_set_time; // Wyzwalacz transferu do RTC
+    logic do_set_time; 
 
     // --- ZEGAR REALNY (RTC) ---
     logic [4:0] rtc_hours; logic [5:0] rtc_minutes; logic [5:0] rtc_seconds;
@@ -56,17 +57,18 @@ module vga_ui_manager (
         .days(rtc_days), .months(rtc_months)
     );
 
-   // --- HISTORIA ---
+    // --- HISTORIA ---
     logic history_pixel;
     alarm_logger u_logger (
         .clk_100MHz(clk_100MHz), 
-        .clk_65MHz(clk_65MHz), // DODANE: Zegar do czcionki
+        .clk_65MHz(clk_65MHz), 
         .rst_n(rst_n),
         .rtc_hours(rtc_hours), 
         .rtc_minutes(rtc_minutes),
-        .rtc_seconds(rtc_seconds), // DODANE: Przekazanie sekund do logów
+        .rtc_seconds(rtc_seconds), 
         .current_bpm(current_bpm), 
         .bpm_valid(bpm_valid),
+        .leads_off(leads_off),
         .hcount(vga_in.hcount), 
         .vcount(vga_in.vcount),
         .show_history(current_state == STATE_HISTORY),
@@ -79,22 +81,33 @@ module vga_ui_manager (
     vga_bpm_display u_bpm_text (
         .clk_65MHz(clk_65MHz), .rst_n(rst_n), 
         .bpm(current_bpm), .bpm_valid(bpm_valid), 
-        .hcount(vga_in.hcount), .vcount(vga_in.vcount), 
+        .hcount(vga_in.hcount), .vcount(vga_in.vcount),
+        .leads_off(leads_off), 
         .rgb_out(bpm_rgb)
     );
 
     // --- RENDEROWANIE TEKSTÓW Z ROM ---
-    logic txt_header, txt_btn1;
+    logic txt_header_M, txt_header_ONITOR;
     
-    vga_text_renderer #(.MAX_CHARS(11), .CHAR_SCALE(2)) t_head (
+    // Litera "M"
+    vga_text_renderer #(.MAX_CHARS(1), .CHAR_SCALE(2)) t_head_m (
         .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
         .pos_x(12'd30), .pos_y(12'd15),
-        .char_string(88'h4D4F4E49544F5220454B47), // "MONITOR EKG" w ASCII HEX
-        .string_len(4'd11), .pixel_on(txt_header)
+        .char_string(8'h4D), // "M"
+        .string_len(4'd1), .pixel_on(txt_header_M)
     );
 
-    // Tekst na głównym przycisku
-    logic [79:0] btn_string; // 10 znaków * 8 bitów
+    // Reszta tytułu odsunięta o 3 piksele w prawo
+    vga_text_renderer #(.MAX_CHARS(10), .CHAR_SCALE(2)) t_head_onitor (
+        .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
+        .pos_x(12'd49), .pos_y(12'd15),
+        .char_string(80'h4F4E49544F5220454B47), // "ONITOR EKG"
+        .string_len(4'd10), .pixel_on(txt_header_ONITOR)
+    );
+
+    // Tekst na głównym przycisku dole (START / HISTORIA / POWROT)
+    logic txt_btn1;
+    logic [79:0] btn_string; 
     always_comb begin
         if (current_state == STATE_SETUP)        btn_string = 80'h20205354415254202020; // "  START   "
         else if (current_state == STATE_MONITOR) btn_string = 80'h20484953544F52494120; // " HISTORIA "
@@ -108,37 +121,44 @@ module vga_ui_manager (
         .char_string(btn_string), .string_len(4'd10), .pixel_on(txt_btn1)
     );
 
-    // --- CYFROWE WYŚWIETLACZE (7-SEG) ---
+    // Nowy przycisk USTAWIENIA (tylko na ekranach MONITOR i HISTORY)
+    logic txt_btn_settings;
+    vga_text_renderer #(.MAX_CHARS(10), .CHAR_SCALE(1)) t_btn2 (
+        .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
+        .pos_x(12'd835), .pos_y(12'd547), // Wyśrodkowane w nowym polu
+        .char_string(80'h555354415749454E4941), // "USTAWIENIA"
+        .string_len((current_state != STATE_SETUP) ? 4'd10 : 4'd0), 
+        .pixel_on(txt_btn_settings)
+    );
+
+    // --- KONWERSJA ZEGARA RTC NA ASCII DLA PRAWEGO GÓRNEGO ROGU ---
+    logic txt_top_clock;
+    logic [7:0] t_h1, t_h2, t_m1, t_m2, t_s1, t_s2, t_d1, t_d2, t_mo1, t_mo2;
+    logic [119:0] top_clock_str; // 15 znaków
+    
+    assign t_h1 = (rtc_hours / 10) + 8'h30;   assign t_h2 = (rtc_hours % 10) + 8'h30;
+    assign t_m1 = (rtc_minutes / 10) + 8'h30; assign t_m2 = (rtc_minutes % 10) + 8'h30;
+    assign t_s1 = (rtc_seconds / 10) + 8'h30; assign t_s2 = (rtc_seconds % 10) + 8'h30;
+    assign t_d1 = (rtc_days / 10) + 8'h30;    assign t_d2 = (rtc_days % 10) + 8'h30;
+    assign t_mo1 = (rtc_months / 10) + 8'h30; assign t_mo2 = (rtc_months % 10) + 8'h30;
+
+    // Format: "HH:MM:SS  DD.MM"
+    assign top_clock_str = {t_h1, t_h2, 8'h3A, t_m1, t_m2, 8'h3A, t_s1, t_s2, 8'h20, 8'h20, t_d1, t_d2, 8'h2E, t_mo1, t_mo2};
+
+    vga_text_renderer #(.MAX_CHARS(15), .CHAR_SCALE(2)) t_top_clock (
+        .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
+        .pos_x(12'd730), .pos_y(12'd15),
+        .char_string(top_clock_str), .string_len(4'd15), .pixel_on(txt_top_clock)
+    );
+
+    // --- CYFROWE WYŚWIETLACZE DLA EKRANU SETUP (Zostawione duże 7-segmentowe) ---
     logic [11:0] hcount, vcount;
     assign hcount = vga_in.hcount;
     assign vcount = vga_in.vcount;
 
-    logic main_time_p [5:0]; logic main_time_pixel;
-    logic main_date_p [3:0]; logic main_date_pixel;
     logic setup_time_p [3:0]; logic setup_time_pixel;
     logic setup_date_p [3:0]; logic setup_date_pixel;
 
-    // Zegar Prawy Górny Róg (HH:MM:SS)
-    vga_7seg_digit #(.POS_X(800), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) mt0 (.digit_val(rtc_hours/10), .* , .pixel_on(main_time_p[0]));
-    vga_7seg_digit #(.POS_X(815), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) mt1 (.digit_val(rtc_hours%10), .* , .pixel_on(main_time_p[1]));
-    vga_7seg_digit #(.POS_X(835), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) mt2 (.digit_val(rtc_minutes/10), .* , .pixel_on(main_time_p[2]));
-    vga_7seg_digit #(.POS_X(850), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) mt3 (.digit_val(rtc_minutes%10), .* , .pixel_on(main_time_p[3]));
-    vga_7seg_digit #(.POS_X(870), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) mt4 (.digit_val(rtc_seconds/10), .* , .pixel_on(main_time_p[4]));
-    vga_7seg_digit #(.POS_X(885), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) mt5 (.digit_val(rtc_seconds%10), .* , .pixel_on(main_time_p[5]));
-    logic main_colon1, main_colon2;
-    assign main_colon1 = (vga_in.hcount >= 829 && vga_in.hcount <= 831 && ((vga_in.vcount == 21) || (vga_in.vcount == 31)));
-    assign main_colon2 = (vga_in.hcount >= 864 && vga_in.hcount <= 866 && ((vga_in.vcount == 21) || (vga_in.vcount == 31)));
-    assign main_time_pixel = main_time_p[0] | main_time_p[1] | main_time_p[2] | main_time_p[3] | main_time_p[4] | main_time_p[5] | main_colon1 | main_colon2;
-
-    // Data Prawy Górny Róg (DD.MM)
-    vga_7seg_digit #(.POS_X(920), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) md0 (.digit_val(rtc_days/10), .* , .pixel_on(main_date_p[0]));
-    vga_7seg_digit #(.POS_X(935), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) md1 (.digit_val(rtc_days%10), .* , .pixel_on(main_date_p[1]));
-    vga_7seg_digit #(.POS_X(960), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) md2 (.digit_val(rtc_months/10), .* , .pixel_on(main_date_p[2]));
-    vga_7seg_digit #(.POS_X(975), .POS_Y(15), .WIDTH(12), .HEIGHT(24), .THICKNESS(3)) md3 (.digit_val(rtc_months%10), .* , .pixel_on(main_date_p[3]));
-    logic main_dot = (vga_in.hcount >= 951 && vga_in.hcount <= 953 && vga_in.vcount >= 36 && vga_in.vcount <= 38);
-    assign main_date_pixel = main_date_p[0] | main_date_p[1] | main_date_p[2] | main_date_p[3] | main_dot;
-
-    // --- SETUP: Zegar i Data Centralna ---
     vga_7seg_digit #(.POS_X(360), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sh0 (.digit_val(setup_hour/10), .* , .pixel_on(setup_time_p[0]));
     vga_7seg_digit #(.POS_X(390), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sh1 (.digit_val(setup_hour%10), .* , .pixel_on(setup_time_p[1]));
     vga_7seg_digit #(.POS_X(440), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sm0 (.digit_val(setup_min/10), .* , .pixel_on(setup_time_p[2]));
@@ -152,32 +172,30 @@ module vga_ui_manager (
     vga_7seg_digit #(.POS_X(650), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) s_mo1 (.digit_val(setup_mon%10), .* , .pixel_on(setup_date_p[3]));
     logic setup_dot = (vga_in.hcount >= 601 && vga_in.hcount <= 605 && vga_in.vcount >= 322 && vga_in.vcount <= 326);
     assign setup_date_pixel = (current_state == STATE_SETUP) && (setup_date_p[0] | setup_date_p[1] | setup_date_p[2] | setup_date_p[3] | setup_dot);
-    
+
     // --- ZNAKI PLUS I MINUS (Bezpośrednie Rysowanie Pikseli) ---
     logic draw_pm_text;
     always_comb begin
         draw_pm_text = 1'b0;
         if (current_state == STATE_SETUP) begin
-            // PLUSY na górze (Y=218..222) pozioma kreska, (Y=210..230) pionowa
             if (vga_in.vcount >= 210 && vga_in.vcount <= 230) begin
-                if (vga_in.hcount >= 383 && vga_in.hcount <= 387) draw_pm_text = 1'b1; // H
-                if (vga_in.hcount >= 463 && vga_in.hcount <= 467) draw_pm_text = 1'b1; // M
-                if (vga_in.hcount >= 563 && vga_in.hcount <= 567) draw_pm_text = 1'b1; // D
-                if (vga_in.hcount >= 643 && vga_in.hcount <= 647) draw_pm_text = 1'b1; // Mo
+                if (vga_in.hcount >= 383 && vga_in.hcount <= 387) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 463 && vga_in.hcount <= 467) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 563 && vga_in.hcount <= 567) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 643 && vga_in.hcount <= 647) draw_pm_text = 1'b1; 
             end
             if (vga_in.vcount >= 218 && vga_in.vcount <= 222) begin
-                if (vga_in.hcount >= 375 && vga_in.hcount <= 395) draw_pm_text = 1'b1; // H
-                if (vga_in.hcount >= 455 && vga_in.hcount <= 475) draw_pm_text = 1'b1; // M
-                if (vga_in.hcount >= 555 && vga_in.hcount <= 575) draw_pm_text = 1'b1; // D
-                if (vga_in.hcount >= 635 && vga_in.hcount <= 655) draw_pm_text = 1'b1; // Mo
+                if (vga_in.hcount >= 375 && vga_in.hcount <= 395) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 455 && vga_in.hcount <= 475) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 555 && vga_in.hcount <= 575) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 635 && vga_in.hcount <= 655) draw_pm_text = 1'b1; 
             end
             
-            // MINUSY na dole (Y=368..372) pozioma kreska
             if (vga_in.vcount >= 368 && vga_in.vcount <= 372) begin
-                if (vga_in.hcount >= 375 && vga_in.hcount <= 395) draw_pm_text = 1'b1; // H
-                if (vga_in.hcount >= 455 && vga_in.hcount <= 475) draw_pm_text = 1'b1; // M
-                if (vga_in.hcount >= 555 && vga_in.hcount <= 575) draw_pm_text = 1'b1; // D
-                if (vga_in.hcount >= 635 && vga_in.hcount <= 655) draw_pm_text = 1'b1; // Mo
+                if (vga_in.hcount >= 375 && vga_in.hcount <= 395) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 455 && vga_in.hcount <= 475) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 555 && vga_in.hcount <= 575) draw_pm_text = 1'b1; 
+                if (vga_in.hcount >= 635 && vga_in.hcount <= 655) draw_pm_text = 1'b1; 
             end
         end
     end
@@ -212,18 +230,26 @@ module vga_ui_manager (
                             if (mouse_x >= 620 && mouse_x < 670) setup_mon  <= (setup_mon == 4'd1) ? 4'd12 : setup_mon - 1'b1;
                         end
                     end
-                    STATE_MONITOR: if (mouse_x > 800 && mouse_x < 950 && mouse_y > 600 && mouse_y < 670) current_state <= STATE_HISTORY;
-                    STATE_HISTORY: if (mouse_x > 800 && mouse_x < 950 && mouse_y > 600 && mouse_y < 670) current_state <= STATE_MONITOR;
+                    STATE_MONITOR: begin
+                        if (mouse_x > 800 && mouse_x < 950 && mouse_y > 600 && mouse_y < 670) current_state <= STATE_HISTORY;
+                        // Nowy przycisk przejścia do SETUP
+                        if (mouse_x > 800 && mouse_x < 950 && mouse_y > 520 && mouse_y < 590) current_state <= STATE_SETUP;
+                    end
+                    STATE_HISTORY: begin
+                        if (mouse_x > 800 && mouse_x < 950 && mouse_y > 600 && mouse_y < 670) current_state <= STATE_MONITOR;
+                        // Nowy przycisk przejścia do SETUP
+                        if (mouse_x > 800 && mouse_x < 950 && mouse_y > 520 && mouse_y < 590) current_state <= STATE_SETUP;
+                    end
                 endcase
             end
         end
     end
 
     // --- GEOMETRIA TŁA ---
-    logic draw_border, draw_button_main, draw_button_setup, in_ecg_zone;
+    logic draw_border, draw_button_main, draw_button_setup, draw_button_settings, in_ecg_zone;
 
     always_comb begin
-        draw_border = 1'b0; draw_button_main = 1'b0; draw_button_setup = 1'b0; in_ecg_zone = 1'b0;
+        draw_border = 1'b0; draw_button_main = 1'b0; draw_button_setup = 1'b0; draw_button_settings = 1'b0; in_ecg_zone = 1'b0;
         if (vga_in.vcount == 60) draw_border = 1'b1; 
 
         case (current_state)
@@ -243,12 +269,20 @@ module vga_ui_manager (
                 if (vga_in.hcount > 30 && vga_in.hcount < 740 && vga_in.vcount > 90 && vga_in.vcount < 520) in_ecg_zone = 1'b1;
                 if ((vga_in.hcount >= 30 && vga_in.hcount <= 740 && (vga_in.vcount == 550 || vga_in.vcount == 730)) || (vga_in.vcount >= 550 && vga_in.vcount <= 730 && (vga_in.hcount == 30 || vga_in.hcount == 740))) draw_border = 1'b1;
                 if ((vga_in.hcount >= 780 && vga_in.hcount <= 990 && (vga_in.vcount == 90 || vga_in.vcount == 730)) || (vga_in.vcount >= 90 && vga_in.vcount <= 730 && (vga_in.hcount == 780 || vga_in.hcount == 990))) draw_border = 1'b1;
+                
+                // Przycisk HISTORIA
                 if (vga_in.hcount > 800 && vga_in.hcount < 950 && vga_in.vcount > 600 && vga_in.vcount < 670) draw_button_main = 1'b1;
+                // Przycisk USTAWIENIA
+                if (vga_in.hcount > 800 && vga_in.hcount < 950 && vga_in.vcount > 520 && vga_in.vcount < 590) draw_button_settings = 1'b1;
             end
             STATE_HISTORY: begin
                 if ((vga_in.hcount >= 30 && vga_in.hcount <= 740 && (vga_in.vcount == 90 || vga_in.vcount == 730)) || (vga_in.vcount >= 90 && vga_in.vcount <= 730 && (vga_in.hcount == 30 || vga_in.hcount == 740))) draw_border = 1'b1;
                 if ((vga_in.hcount >= 780 && vga_in.hcount <= 990 && (vga_in.vcount == 90 || vga_in.vcount == 730)) || (vga_in.vcount >= 90 && vga_in.vcount <= 730 && (vga_in.hcount == 780 || vga_in.hcount == 990))) draw_border = 1'b1;
+                
+                // Przycisk POWRÓT (na koordynatach HISTORII)
                 if (vga_in.hcount > 800 && vga_in.hcount < 950 && vga_in.vcount > 600 && vga_in.vcount < 670) draw_button_main = 1'b1;
+                // Przycisk USTAWIENIA
+                if (vga_in.hcount > 800 && vga_in.hcount < 950 && vga_in.vcount > 520 && vga_in.vcount < 590) draw_button_settings = 1'b1;
             end
         endcase
     end
@@ -265,12 +299,14 @@ module vga_ui_manager (
             vga_out.hsync  <= vga_in.hsync;  vga_out.vsync  <= vga_in.vsync;
             vga_out.hblnk  <= vga_in.hblnk;  vga_out.vblnk  <= vga_in.vblnk;
 
-            if (txt_header || txt_btn1 || draw_pm_text || main_time_pixel || main_date_pixel || setup_time_pixel || setup_date_pixel) 
+            // Scalony warunek z nowymi tekstami
+            if (txt_header_M || txt_header_ONITOR || txt_btn1 || txt_btn_settings || txt_top_clock || draw_pm_text || setup_time_pixel || setup_date_pixel) 
                                                 vga_out.rgb <= COLOR_TEXT_W;
             else if (history_pixel)             vga_out.rgb <= COLOR_HIST;
             else if (current_state == STATE_MONITOR && bpm_rgb != 12'h000) vga_out.rgb <= bpm_rgb;
             else if (draw_border)               vga_out.rgb <= COLOR_BORDER;
-            else if (draw_button_main)          vga_out.rgb <= COLOR_BTN;
+            // Zwykły przycisk i nowy przycisk ustawień mają ten sam kolor (niebieski)
+            else if (draw_button_main || draw_button_settings) vga_out.rgb <= COLOR_BTN;
             else if (draw_button_setup)         vga_out.rgb <= COLOR_BTN_S;
             else if (current_state == STATE_MONITOR && in_ecg_zone) vga_out.rgb <= vga_in.rgb;
             else                                vga_out.rgb <= COLOR_BG;
