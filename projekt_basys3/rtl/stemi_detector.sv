@@ -30,7 +30,7 @@ module stemi_detector #(
 
     input logic r_peak_detected,
 
-    //alarms
+    //alarm
     output logic stemi_alarm
 );
 
@@ -40,7 +40,7 @@ logic signed [DATA_WIDTH-1:0] baseline_locked, baseline_locked_nxt;
 
 //inner counters for fsm
 logic [($clog2(SAMPLES_TO_J_POINT))-1:0] delay_counter, delay_counter_nxt;
-logic [($clog2(SAMPLES_FOR_AVERAGE))-1:0] st_samples_counter, st_samples_counter_nxt;
+logic [($clog2(SAMPLES_FOR_AVERAGE)):0] st_samples_counter, st_samples_counter_nxt;
 
 //accumulator for averaging
 logic signed [(DATA_WIDTH-1)+3:0] st_accumulator, st_accumulator_nxt;
@@ -117,14 +117,14 @@ always_comb begin
                 end
             end
         end
-        //J point average measurement
+        // J point average measurement
         J_POINT: begin
-            if(st_samples_counter == SAMPLES_FOR_AVERAGE) begin
-                state_nxt = EVALUATE;
-            end
-            else begin
-                if(data_sample_valid_in) begin
-                    st_accumulator_nxt = st_accumulator + ecg_data_in;
+            if (data_sample_valid_in) begin
+                st_accumulator_nxt = st_accumulator + ecg_data_in;
+                if (st_samples_counter == SAMPLES_FOR_AVERAGE - 1) begin
+                    state_nxt = EVALUATE;
+                end
+                else begin
                     st_samples_counter_nxt = st_samples_counter + 1'b1;
                 end
             end
