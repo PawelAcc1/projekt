@@ -5,6 +5,10 @@ module top_ecg (
         inout  logic ps2_clk,
         inout  logic ps2_data,
         input  logic [1:0] leads_off,
+        input logic recording_button,
+        output logic recording_status,
+        input logic rx,
+        output logic tx,
         inout wire i2c_sda,
         output wire i2c_scl,
         output logic vs,
@@ -32,6 +36,20 @@ module top_ecg (
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
     wire [15:0] ecg_data_received;
+
+    // Record samples connections
+    wire [13:0] record_read_address;
+    wire [15:0] record_read_data;
+    wire record_memory_full;
+    wire start_recording;
+
+    //uart connections
+    wire rx_done;
+    wire [7:0] rx_data;
+    wire tx_done;
+    wire [7:0] tx_data;
+    wire tx_data_ready;
+    wire uart_tick;
 
     // Pan-Tompkins pipeline signals
     wire signed [15:0] diff_data_out;       // Differentiator output (16-bit signed)
@@ -96,6 +114,88 @@ module top_ecg (
         .adc_data(ecg_data_received),
         .data_ready(data_ready)
     );
+
+    /*
+     * ============================================
+     * RECORD SAMPLES SECTION START
+     * ============================================
+    */
+   //Record samples
+    recording_memory #(
+        .DATA_BITS(16),
+        .RECORDING_DURATION(20)
+    ) u_recording_memory (
+        .clk(clk_100MHz),
+        .rst_n(rst_n),
+        .i2c_data_ready(data_ready),
+        .i2c_data(ecg_data_received),
+        .start_recording(start_recording),
+        .read_address(record_read_address),
+        .read_data(record_read_data),
+        .memory_full(record_memory_full)
+    );
+
+    assign recording_status = record_memory_full;
+
+    //Convert samples to ASCII
+    hex_to_ascii #(
+        .DATA_BITS(16),
+        .RECORDING_DURATION(20),
+        .UART_DATA_BITS(8)
+    ) u_hex_to_ascii (
+        .clk(clk_100MHz),
+        .rst_n(rst_n),
+        .rx_done(rx_done),
+        .rx_data(rx_data),
+        .tx_data(tx_data),
+        .tx_data_ready(tx_data_ready),
+        .tx_done(tx_done),
+        .memory_full(record_memory_full),
+        .read_address(record_read_address),
+        .read_data(record_read_data)
+    );
+
+    //uart tick generator
+    tick_generator u_tick_generator (
+        .clk(clk_100MHz),
+        .rst_n(rst_n),
+        .tick(uart_tick)
+    );
+
+    //button debouncer
+    debounce u_debounce (
+        .clk(clk_100MHz),
+        .reset(!rst_n),
+        .db_tick(start_recording),
+        .db_level(),
+        .sw(recording_button)
+    );
+    //uart reciever
+    uart_rx u_uart_rx (
+        .clk(clk_100MHz),
+        .rst_n(rst_n),
+        .received_data(rx_data),
+        .rx_done(rx_done),
+        .tick_enable(uart_tick),
+        .rx(rx)
+    );
+
+    //uart transmitter
+    uart_tx u_uart_tx (
+        .clk(clk_100MHz),
+        .rst_n(rst_n),
+        .tick_enable(uart_tick),
+        .data_in(tx_data),
+        .tx_start(tx_data_ready),
+        .tx_done(tx_done),
+        .tx(tx)
+    );
+
+    /*
+     * ============================================
+     * RECORD SAMPLES SECTION END
+     * ============================================
+    */
 
     /*
      * FIR BANDPASS FILTER INSTANCE FROM IP CATALOG

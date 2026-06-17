@@ -15,15 +15,19 @@
 module top_ecg_basys3 (
         input  wire clk,
         input  wire btnC,
+        input  wire btnU,
         inout  wire [7:2] JA,
         input  wire [7:0] JC, // DODANE: Cały port JC dla czujnika
         inout  wire PS2Clk,
         inout  wire PS2Data,
+        input  wire RsRx,
+        output wire RsTx,
         output wire Vsync,
         output wire Hsync,
         output wire [3:0] vgaRed,
         output wire [3:0] vgaGreen,
-        output wire [3:0] vgaBlue
+        output wire [3:0] vgaBlue,
+        output wire [0:0] led
     );
 
     timeunit 1ns;
@@ -51,14 +55,18 @@ module top_ecg_basys3 (
         .ps2_clk(PS2Clk),
         .ps2_data(PS2Data),
         .rst_n(!btnC & locked),
+        .recording_button(btnU),
         .leads_off(JC[1:0]), // DODANE: Podłączenie dwóch pierwszych pinów JC
         .i2c_sda(JA[3]),
         .i2c_scl(JA[2]),
+        .rx(RsRx),
+        .tx(RsTx),
         .vs(Vsync),
         .hs(Hsync),
         .r(vgaRed),
         .g(vgaGreen),
-        .b(vgaBlue)
+        .b(vgaBlue),
+        .recording_status(led[0])
     );
 
 endmodule

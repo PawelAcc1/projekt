@@ -59,6 +59,11 @@ set sv_files {
     ../rtl/vga_text_renderer.sv
     ../rtl/delay_buffer.sv
     ../rtl/stemi_detector.sv
+    ../rtl/uart_rx.sv
+    ../rtl/uart_tx.sv
+    ../rtl/recording_memory.sv
+    ../rtl/hex_to_ascii.sv
+    ../rtl/tick_generator.sv
     rtl/top_ecg_basys3.sv
 }
 
@@ -66,6 +71,7 @@ set sv_files {
 set verilog_files {
     ../rtl/clk_wiz_0.v
     ../rtl/clk_wiz_0_clk_wiz.v
+    ../rtl/debounce.v
 }
 
 # Specify IP Core files location
