@@ -11,8 +11,9 @@ import os
 fs = 500.0  # Częstotliwość próbkowania w Hz
 nyq = 0.5 * fs  # Częstotliwość Nyquista
 f_cutoff = [0.5, 40] # Częstotliwość do obrazowania ekg
+beta = 8
 
-num_taps = 301 # liczba odprowadzeń
+num_taps = 301 # Liczba ODCZEPÓW (współczynników) filtra
 
 # ==========================================
 # 2. PROJEKTOWANIE FILTRÓW
@@ -22,8 +23,8 @@ bandpass_coeffs = signal.firwin(
     numtaps=num_taps,
     cutoff=f_cutoff,
     fs=fs,
-    window='blackmanharris',
-    pass_zero='bandpass'
+    window=('kaiser', beta),
+    pass_zero=False # Oznacza filtr Bandpass (blokuje DC, czyli 0 Hz)
 )
 
 # ==========================================
@@ -37,8 +38,8 @@ bandpass_coeffs_fpga = np.round(bandpass_coeffs * skala_fpga).astype(int)
 # 4. ZAPIS WSPÓŁCZYNNIKÓW DO PLIKU .COE
 # ==========================================
 #lokalizacja pliku ze wspolczynnikami
-file_path = r"C:\Users\pbuko\Desktop\SystemVerilog\projekt\projekt_basys3\fir_compiler_notch" # r - raw string - python ignoruje znaki specjalne
-file_name = "bandpass_coeffs.coe"
+file_path = r"C:\Users\pbuko\Desktop\SystemVerilog\project_ecg\projekt_basys3\fir_compiler_notch" # r - raw string - python ignoruje znaki specjalne
+file_name = "bandstop_coeffs.coe"
 full_path = os.path.join(file_path, file_name) # concatenation of file path and file name
 
 # format coefficient 
