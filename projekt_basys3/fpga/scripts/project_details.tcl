@@ -78,6 +78,10 @@ set verilog_files {
 set ip_core_files {
     ../fir_compiler_0_1/fir_compiler_0.xci
     ../fir_compiler_notch/fir_compiler_notch.xci
+    ../memory_init/blk_mem_arrhythmia/blk_mem_arrhythmia.xci
+    ../memory_init/blk_mem_tachykardia/blk_mem_tachykardia.xci
+    ../memory_init/blk_mem_bradycardia/blk_mem_bradycardia.xci
+    ../memory_init/blk_mem_stemi/blk_mem_stemi.xci
 }
 
 # Specify VHDL design files location            -- EDIT
@@ -88,6 +92,6 @@ set vhdl_files {
 }
 
 # Specify files for a memory initialization     -- EDIT
-# set mem_files {
-#    path/to/file.data
-# }
+set mem_files {
+    ../rtl/bpm_rom.hex
+}
