@@ -10,6 +10,9 @@ module alarm_logger (
     input  logic [5:0] rtc_seconds,
     input  logic [7:0] current_bpm,
     input  logic bpm_valid,
+    input  logic [7:0] current_bpm_instant,
+    input  logic bpm_instant_valid,
+    input  logic suppress_rhythm_alarms,
     input  logic [1:0] leads_off, // Wejście z fizycznych pinów JC
 
     input  logic [11:0] hcount,
@@ -37,7 +40,7 @@ module alarm_logger (
 
     // --- 2. LEADS-OFF & BLANKING TIMER (8 Sekund) ---
     logic [29:0] stable_timer;
-    logic is_stable; 
+    logic is_stable;
 
     always_ff @(posedge clk_100MHz or negedge rst_n) begin
         if (!rst_n) begin
@@ -48,7 +51,7 @@ module alarm_logger (
             if (leads_sync_2 != 2'b00) begin
                 stable_timer <= '0;
                 is_stable <= 1'b0;
-            end else if (stable_timer < 30'd800_000_000) begin 
+            end else if (stable_timer < 30'd800_000_000) begin
                 stable_timer <= stable_timer + 1'b1;
                 is_stable <= 1'b0;
             end else begin
@@ -60,13 +63,24 @@ module alarm_logger (
     // --- 3. DETEKCJA MEDYCZNA ---
     logic [7:0] prev_bpm;
     logic [7:0] bpm_diff;
+    logic [7:0] prev_bpm_instant;
+    logic [7:0] bpm_instant_diff;
     
     assign bpm_diff = (current_bpm > prev_bpm) ? (current_bpm - prev_bpm) : (prev_bpm - current_bpm);
+    assign bpm_instant_diff = (current_bpm_instant > prev_bpm_instant)
+                            ? (current_bpm_instant - prev_bpm_instant)
+                            : (prev_bpm_instant - current_bpm_instant);
 
-    logic is_brady, is_tachy, is_arrhythmia;
-    assign is_brady      = (current_bpm > 0 && current_bpm < 8'd50);
-    assign is_tachy      = (current_bpm > 8'd100);
-    assign is_arrhythmia = (bpm_diff > 8'd15 && prev_bpm != 0);
+    logic is_brady, is_tachy, is_arrhythmia, is_stemi;
+    assign is_brady      = (!suppress_rhythm_alarms &&
+                            current_bpm > 0 && current_bpm < 8'd50);
+    assign is_tachy      = (!suppress_rhythm_alarms &&
+                            current_bpm > 8'd100);
+    assign is_arrhythmia = (!suppress_rhythm_alarms &&
+                            bpm_instant_valid &&
+                            current_bpm_instant != 0 &&
+                            prev_bpm_instant != 0 &&
+                            bpm_instant_diff > 8'd15);
     assign is_stemi      = (stemi_alarm);
 
 
@@ -82,10 +96,14 @@ module alarm_logger (
     always_ff @(posedge clk_100MHz or negedge rst_n) begin
         if (!rst_n) begin
             prev_bpm <= 8'd0;
+            prev_bpm_instant <= 8'd0;
             prev_alarm <= 3'd0;
         end else begin
             if (bpm_valid) begin
                 prev_bpm <= current_bpm;
+            end
+            if (bpm_instant_valid && current_bpm_instant != 0) begin
+                prev_bpm_instant <= current_bpm_instant;
             end
             
             prev_alarm <= current_alarm; 
@@ -110,11 +128,11 @@ module alarm_logger (
     assign b3 = (current_bpm % 10) + 8'h30;
 
     always_comb begin
-        if      (is_arrhythmia) str_type = 88'h415259544D494120202020;
+        if      (is_stemi)      str_type = 88'h5354454D49202020202020;
+        else if (is_arrhythmia) str_type = 88'h415259544D494120202020;
         else if (is_tachy)      str_type = 88'h54414348594B4152444941;
         else if (is_brady)      str_type = 88'h42524144594B4152444941;
         // "STEMI" (5 znaków uzupelnione spacjami)
-        else if (is_stemi)      str_type = 88'h5354454D49202020202020;
         // Puste 11 spacji
         else                    str_type = 88'h2020202020202020202020;
     end
