@@ -1,0 +1,54 @@
+// =============================================================================
+// Projekt symulacji top_ecg (DVT / external simulator)
+// W Vivado uzyj pelnego projektu ecg_project (IP FIR + BRAM sa w project_details.tcl)
+// =============================================================================
+
+// 1. Interfejsy i pakiety
+sv work "../../rtl/vga_if.sv"
+sv work "../../rtl/vga_pkg.sv"
+
+// 2. VGA / UI
+sv work "../../rtl/vga_timing.sv"
+sv work "../../rtl/draw_grid.sv"
+sv work "../../rtl/vga_formatter.sv"
+sv work "../../rtl/render_signal.sv"
+sv work "../../rtl/ring_buffer.sv"
+sv work "../../rtl/draw_mouse.sv"
+sv work "../../rtl/rtc_clock.sv"
+sv work "../../rtl/vga_7seg_digit.sv"
+sv work "../../rtl/vga_bpm_display.sv"
+sv work "../../rtl/vga_text_renderer.sv"
+sv work "../../rtl/front_rom.sv"
+sv work "../../rtl/alarm_logger.sv"
+sv work "../../rtl/vga_ui_manager.sv"
+
+// 3. Peryferia
+sv work "../../rtl/sampling_timer.sv"
+sv work "../../rtl/i2c_master.sv"
+sv work "../../rtl/recording_memory.sv"
+sv work "../../rtl/hex_to_ascii.sv"
+sv work "../../rtl/tick_generator.sv"
+sv work "../../rtl/uart_rx.sv"
+sv work "../../rtl/uart_tx.sv"
+sv work "../../rtl/baseline_restore.sv"
+sv work "../../rtl/debounce.sv"
+
+// 4. Pan-Tompkins + STEMI + BPM
+sv work "../../rtl/differentiator.sv"
+sv work "../../rtl/squarer.sv"
+sv work "../../rtl/moving_window_integration.sv"
+sv work "../../rtl/adaptive_threshold.sv"
+sv work "../../rtl/bpm_calculator.sv"
+sv work "../../rtl/delay_buffer.sv"
+sv work "../../rtl/stemi_detector.sv"
+
+// 5. Top + testbench STEMI
+sv work "../../rtl/top_ecg.sv"
+sv work "top_ecg_tb.sv"
+
+// VHDL (mysz PS/2)
+vhdl work "../../rtl/Ps2Interface.vhd"
+vhdl work "../../rtl/MouseCtl.vhd"
+
+// UWAGA: fir_compiler_0, fir_compiler_notch i blk_mem_* wymagaja netlist z Vivado IP.
+// W Vivado GUI: Run Simulation na projekcie ecg_project (nie tylko ten plik .prj).
