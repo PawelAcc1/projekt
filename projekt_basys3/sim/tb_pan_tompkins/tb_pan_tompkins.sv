@@ -56,8 +56,11 @@ module tb_pan_tompkins;
         .rst_n(rst_n),
         .sample_tick(sample_valid_in), // Flaga valid działa tu idealnie jako tyknięcie zegara 500 Hz
         .r_peak_detected(r_peak_detected),
+        .min_rr_samples(11'd150),
         .bpm(bpm_out),
-        .bpm_valid(bpm_valid_out)
+        .bpm_valid(bpm_valid_out),
+        .bpm_instant(),
+        .bpm_instant_valid()
     );
 
     // Generator zegara
