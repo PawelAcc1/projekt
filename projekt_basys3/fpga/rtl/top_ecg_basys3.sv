@@ -16,6 +16,7 @@ module top_ecg_basys3 (
         input  wire clk,
         input  wire btnC,
         input  wire btnU,
+        input  wire [4:0] sw,
         inout  wire [7:2] JA,
         input  wire [7:0] JC, // DODANE: Cały port JC dla czujnika
         inout  wire PS2Clk,
@@ -27,7 +28,7 @@ module top_ecg_basys3 (
         output wire [3:0] vgaRed,
         output wire [3:0] vgaGreen,
         output wire [3:0] vgaBlue,
-        output wire [0:0] led
+        output wire [1:0] led
     );
 
     timeunit 1ns;
@@ -66,7 +67,9 @@ module top_ecg_basys3 (
         .r(vgaRed),
         .g(vgaGreen),
         .b(vgaBlue),
-        .recording_status(led[0])
+        .recording_status(led[0]),
+        .mode_control(sw),
+        .led_stemi(led[1])
     );
 
 endmodule
