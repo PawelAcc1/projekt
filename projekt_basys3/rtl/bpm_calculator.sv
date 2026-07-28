@@ -3,82 +3,120 @@
 module bpm_calculator (
     input  logic clk,
     input  logic rst_n,
-    input  logic sample_tick,      // Impuls 500 Hz wyznaczający upływ czasu
-    input  logic r_peak_detected,  // Impuls informujący o znalezieniu piku R
-    
-    output logic [7:0] bpm,        // Wyliczone i UŚREDNIONE BPM (max 255)
-    output logic bpm_valid         // Flaga sygnalizująca wyliczenie nowej wartości
+    input  logic sample_tick,
+    input  logic r_peak_detected,
+    input  logic [10:0] min_rr_samples,
+
+    output logic [7:0] bpm,
+    output logic bpm_valid,
+    output logic [7:0] bpm_instant,
+    output logic bpm_instant_valid
 );
 
-    // 11-bitowy licznik próbek wystarczy do zliczenia 2047 (timeout ustalamy na 2000)
-    logic [10:0] sample_count; 
+    localparam logic [10:0] MAX_RR_SAMPLES = 11'd2000;
 
-    // --- Pamięć ROM (Look-Up Table) ---
+    // Odrzuca dodatkowe lokalne maksima z jednego zespolu QRS.
+    // Top podaje 220 probek dla trybow BRAM oraz 150 dla realnych elektrod,
+    // zeby nie uciac bardzo szybkiej tachykardii pacjenta.
+    logic [10:0] active_min_rr_samples;
+    assign active_min_rr_samples = (min_rr_samples == 11'd0) ? 11'd150 : min_rr_samples;
+
+    logic [10:0] sample_count;
+    logic [7:0]  bpm_history [0:9];
+    logic [3:0]  bpm_history_count;
+    logic [11:0] bpm_history_sum;
+    logic        timeout_fired;
+    logic        have_reference_peak;
+
     logic [7:0] bpm_rom [0:2047];
     initial begin
-        // Plik dodany do projektu przez read_mem (mem_files w project_details.tcl),
-        // dzięki czemu Vivado znajduje go po samej nazwie zarówno w syntezie, jak i symulacji.
         $readmemh("bpm_rom.hex", bpm_rom);
     end
 
-    // --- Rejestry do uśredniania (Moving Average na 10 próbek) ---
-    logic [7:0] bpm_history [0:9];
-    
-    // Zmienna pomocnicza (kombinacyjna) na odczyt z ROM
-    logic [7:0] current_bpm_raw;
-    assign current_bpm_raw = bpm_rom[sample_count];
-
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            sample_count <= '0;
-            bpm <= '0;
-            bpm_valid <= 1'b0;
-            for (int i = 0; i < 10; i++) bpm_history[i] <= '0;
-        end 
+            sample_count  <= '0;
+            bpm           <= '0;
+            bpm_valid     <= 1'b0;
+            bpm_instant   <= '0;
+            bpm_instant_valid <= 1'b0;
+            timeout_fired <= 1'b0;
+            have_reference_peak <= 1'b0;
+            bpm_history_count <= '0;
+            bpm_history_sum   <= '0;
+            for (int i = 0; i < 10; i++)
+                bpm_history[i] <= '0;
+        end
         else begin
-            bpm_valid <= 1'b0; 
-            
-            // 1. Zliczanie próbek (odmierzanie czasu)
+            bpm_valid <= 1'b0;
+            bpm_instant_valid <= 1'b0;
+
             if (sample_tick) begin
-                if (sample_count < 11'd2047) begin
+                if (sample_count < 11'd2047)
                     sample_count <= sample_count + 1;
+
+                // timeout: brak R przez 2000 probek (tylko RAZ, na ticku probki)
+                if (!timeout_fired && (sample_count > MAX_RR_SAMPLES)) begin
+                    bpm           <= 8'd0;
+                    bpm_valid     <= 1'b1;
+                    bpm_instant   <= 8'd0;
+                    timeout_fired <= 1'b1;
+                    have_reference_peak <= 1'b0;
+                    bpm_history_count <= '0;
+                    bpm_history_sum   <= '0;
+                    for (int i = 0; i < 10; i++)
+                        bpm_history[i] <= '0;
                 end
             end
 
-            // 2. Obsługa wykrytego piku R
             if (r_peak_detected) begin
-                if (sample_count > 150 && sample_count <= 2000) begin
-                    
-                    // Aktualizacja historii tętna - przesunięcie całej tablicy
-                    for (int i = 9; i > 0; i--) begin
-                        bpm_history[i] <= bpm_history[i-1];
-                    end
-                    bpm_history[0] <= current_bpm_raw;
+                automatic logic [7:0] current_bpm_raw;
+                automatic logic [11:0] next_history_sum;
+                automatic logic [3:0] next_history_count;
 
-                    // Obliczenie średniej z 10 pomiarów (wymuszamy 12-bitowe dodawanie, aby uniknąć przepełnienia)
-                    // Sumujemy bieżący odczyt oraz 9 poprzednich z historii
-                    bpm <= (12'(current_bpm_raw) + 
-                            12'(bpm_history[0]) + 12'(bpm_history[1]) + 12'(bpm_history[2]) + 
-                            12'(bpm_history[3]) + 12'(bpm_history[4]) + 12'(bpm_history[5]) + 
-                            12'(bpm_history[6]) + 12'(bpm_history[7]) + 12'(bpm_history[8])) / 10;
-                    
-                    bpm_valid <= 1'b1;
+                // Zbyt bliskie piki sa zwykle drugim lokalnym maksimum tego samego QRS.
+                // Nie zerujemy wtedy licznika, bo kolejny prawdziwy R-peak mialby
+                // sztucznie za krotki odstep RR i BPM zostalby na 0.
+                if (sample_count >= active_min_rr_samples && sample_count <= MAX_RR_SAMPLES) begin
+                    timeout_fired <= 1'b0;
+                    if (!have_reference_peak) begin
+                        have_reference_peak <= 1'b1;
+                        sample_count <= '0;
+                    end
+                    else begin
+                        current_bpm_raw = bpm_rom[sample_count];
+                        bpm_instant <= current_bpm_raw;
+                        bpm_instant_valid <= 1'b1;
+
+                        next_history_sum = bpm_history_sum + {4'b0, current_bpm_raw};
+                        next_history_count = (bpm_history_count < 4'd10)
+                                           ? (bpm_history_count + 4'd1)
+                                           : 4'd10;
+                        if (bpm_history_count == 4'd10)
+                            next_history_sum = next_history_sum - {4'b0, bpm_history[9]};
+
+                        for (int i = 9; i > 0; i--)
+                            bpm_history[i] <= bpm_history[i-1];
+                        bpm_history[0] <= current_bpm_raw;
+
+                        bpm_history_sum   <= next_history_sum;
+                        bpm_history_count <= next_history_count;
+                        bpm <= next_history_sum / next_history_count;
+
+                        bpm_valid <= 1'b1;
+
+                        sample_count <= '0;
+                    end
                 end
-                
-                // Wyzerowanie licznika dla następnego uderzenia serca
-                sample_count <= '0;
-            end
-            
-            // 3. Timeout: brak piku R przez 4 sekundy (2000 próbek)
-            if (sample_count > 2000) begin
-                bpm <= 8'd0;
-                bpm_valid <= 1'b1; 
-                
-                // Resetujemy historię, żeby przywrócenie sygnału nie uśredniało się z zerami
-                for (int i = 0; i < 10; i++) bpm_history[i] <= '0;
-                
-                // Zatrzymujemy licznik
-                sample_count <= 11'd2047; 
+                else if (sample_count > MAX_RR_SAMPLES) begin
+                    timeout_fired <= 1'b0;
+                    have_reference_peak <= 1'b1;
+                    bpm_history_count <= '0;
+                    bpm_history_sum   <= '0;
+                    for (int i = 0; i < 10; i++)
+                        bpm_history[i] <= '0;
+                    sample_count <= '0;
+                end
             end
         end
     end
