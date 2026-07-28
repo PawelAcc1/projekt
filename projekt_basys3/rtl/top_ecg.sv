@@ -1,4 +1,11 @@
-module top_ecg (
+module top_ecg #(
+        // 200_000 @ 100 MHz => 500 Hz (plytka). W symulacji TB nadpisuje mniejsza wartoscia
+        // (>= liczba odczepow najdluzszego FIR, ~301).
+        parameter int TICK_GEN_DIV = 200_000,
+        // Zachowany tylko dla kompatybilnosci ze starszym testbenchem.
+        // Tor sprzetowy zawsze idzie przez FIR IP.
+        parameter bit FAST_PATHOLOGY_SIM = 0
+    )(
         input  logic clk_100MHz,
         input  logic clk_65MHz,
         input  logic rst_n,
@@ -7,6 +14,7 @@ module top_ecg (
         input  logic [1:0] leads_off,
         input logic recording_button,
         output logic recording_status,
+        input logic [4:0] mode_control,
         input logic rx,
         output logic tx,
         inout wire i2c_sda,
@@ -15,7 +23,8 @@ module top_ecg (
         output logic hs,
         output logic [3:0] r,
         output logic [3:0] g,
-        output logic [3:0] b
+        output logic [3:0] b,
+        output logic led_stemi
     );
 
     timeunit 1ns;
@@ -32,6 +41,7 @@ module top_ecg (
     wire [15:0] filtered_data_0; //after bandpass fir filter
     wire [15:0] filtered_data_1; //after notch fir filter
     wire [15:0] data_baseline;
+    wire [1:0]         effective_leads_off;
     wire [11:0] display_data;
     wire [9:0] read_address;
     wire [11:0] ecg_data_read;
@@ -51,6 +61,18 @@ module top_ecg (
     wire tx_data_ready;
     wire uart_tick;
 
+    //artificial samples connections
+    reg [$clog2(TICK_GEN_DIV):0] in_counter;
+    reg ena;
+    wire [15:0] dout_tach;
+    wire [15:0] dout_brady;
+    wire [15:0] dout_arr;
+    wire [15:0] dout_stemi;
+    reg [12:0] addra;
+    reg [1:0] dout_valid_delay;
+    logic mux_data_valid_out;
+    logic [15:0] mux_data_out;
+
     // Pan-Tompkins pipeline signals
     wire signed [15:0] diff_data_out;       // Differentiator output (16-bit signed)
     wire               data_ready_diff;
@@ -59,10 +81,21 @@ module top_ecg (
     wire        [38:0] mwi_data_out;        // Moving window integration output (39-bit)
     wire               data_ready_mwi;
     wire               r_peak_detected_pulse;
+    wire               r_peak_for_stemi;
+
+    // AXI tready wejscia FIR (musi byc podlaczone - w sim Z/X = brak probek w torze DSP)
+    wire               fir_bp_s_tready;
+    wire               fir_notch_s_tready;
+
+    wire [10:0] stemi_min_rr_samples;
+    logic [10:0] stemi_rr_counter;
+    logic        stemi_have_reference_peak;
 
     // BPM calculator signals
     wire        [7:0]  current_bpm;         // 8-bitowy wynik tętna
     wire               bpm_updated;         // Flaga nowej wartości BPM
+    wire        [7:0]  current_bpm_instant;
+    wire               bpm_instant_updated;
 
     // Delay buffers connections
     wire signed [15:0] deriv_data_buff;
@@ -71,7 +104,11 @@ module top_ecg (
     wire ecg_valid_out_buff;
 
     //STEMI alarm connection
+    wire stemi_alarm_raw;
     wire stemi_alarm;
+    wire stemi_mode_selected;
+    wire stemi_detection_enabled;
+    assign led_stemi = stemi_alarm;
 
     vga_if if_tim();
     vga_if if_grid();
@@ -82,6 +119,11 @@ module top_ecg (
     assign vs = if_mouse.vsync;
     assign hs = if_mouse.hsync;
     assign {r,g,b} = if_mouse.rgb;
+    assign effective_leads_off = mode_control[4] ? 2'b00 : leads_off;
+    assign stemi_min_rr_samples = mode_control[4] ? 11'd220 : 11'd150;
+    assign stemi_mode_selected = (mode_control == 5'b10001);
+    assign stemi_detection_enabled = !mode_control[4] || stemi_mode_selected;
+    assign stemi_alarm = stemi_detection_enabled && stemi_alarm_raw;
 
     /*
      * INSTANCES OF MODULES
@@ -127,8 +169,8 @@ module top_ecg (
     ) u_recording_memory (
         .clk(clk_100MHz),
         .rst_n(rst_n),
-        .i2c_data_ready(data_ready),
-        .i2c_data(ecg_data_received),
+        .i2c_data_ready(data_ready_notch),
+        .i2c_data(filtered_data_1),
         .start_recording(start_recording),
         .read_address(record_read_address),
         .read_data(record_read_data),
@@ -198,27 +240,139 @@ module top_ecg (
     */
 
     /*
+     * ============================================
+     * ARTIFICIAL SAMPLES ROM SECTION START
+     * ============================================
+    */
+
+    //enable_tick generator 500Hz and sample_valid pipeline
+    always_ff @(posedge clk_100MHz or negedge rst_n) begin
+        if(!rst_n) begin
+            in_counter <= '0;
+            ena <= '0;
+            dout_valid_delay <= '0;
+        end else begin
+            dout_valid_delay[0] <= ena;
+            dout_valid_delay[1] <= dout_valid_delay[0];
+            if(in_counter == TICK_GEN_DIV - 1) begin
+                in_counter <= '0;
+                ena <= '1;
+            end
+            else begin
+                in_counter <= in_counter + 1;
+                ena <= '0;
+            end
+        end
+    end
+
+    //adress counter
+    always_ff @(posedge clk_100MHz or negedge rst_n) begin
+        if(!rst_n) begin
+            addra <= '0;
+        end
+        else begin
+            if(ena) begin
+                if(addra == 13'd7559) begin
+                    addra <= '0;
+                end
+                else begin
+                    addra <= addra + 1;
+                end
+            end
+        end
+    end
+
+    //TACHYCARDIA
+    blk_mem_tachykardia u_blk_mem_tachycardia (
+        .clka(clk_100MHz),    // input wire clka
+        .ena(ena),      // input wire ena
+        .addra(addra),  // input wire [12 : 0] addra
+        .douta(dout_tach)  // output wire [15 : 0] douta
+    );
+
+    //BRADYCARDIA
+    blk_mem_bradycardia u_blk_mem_bradycardia (
+        .clka(clk_100MHz), // input wire clka
+        .ena(ena), // input wire ena
+        .addra(addra), // input wire [12:0] addra
+        .douta(dout_brady) // output wire [15:0] douta
+    );
+
+    //arrhythmia
+    blk_mem_arrhythmia u_blk_mem_arrhythmia (
+        .clka(clk_100MHz),    // input wire clka
+        .ena(ena),      // input wire ena
+        .addra(addra),  // input wire [12 : 0] addra
+        .douta(dout_arr)  // output wire [15 : 0] douta
+    );
+
+
+    //stemi
+    blk_mem_stemi u_blk_mem_stemi (
+    .clka(clk_100MHz),    // input wire clka
+    .ena(ena),      // input wire ena
+    .addra(addra),  // input wire [12 : 0] addra
+    .douta(dout_stemi)  // output wire [15 : 0] douta
+    );
+
+    //mode cotrol
+    always_comb begin
+        casez (mode_control)
+            5'b0????: begin //real time imaging
+                mux_data_valid_out = data_ready;
+                mux_data_out = ecg_data_received;
+            end
+            5'b11???: begin //tachycardia
+                mux_data_valid_out = dout_valid_delay[1];
+                mux_data_out = dout_tach;
+            end
+            5'b101??: begin //bradycardia
+                mux_data_valid_out = dout_valid_delay[1];
+                mux_data_out = dout_brady;
+            end
+            5'b1001?: begin //arrhythmia
+                mux_data_valid_out = dout_valid_delay[1];
+                mux_data_out = dout_arr;
+            end
+            5'b10001: begin //stemi
+                mux_data_valid_out = dout_valid_delay[1];
+                mux_data_out = dout_stemi;
+            end
+            default: begin
+                mux_data_valid_out = data_ready;
+                mux_data_out = ecg_data_received;
+            end
+        endcase
+    end
+
+    /*
+     * ============================================
+     * ARTIFICIAL SAMPLES ROM SECTION END
+     * ============================================
+    */
+
+    /*
      * FIR BANDPASS FILTER INSTANCE FROM IP CATALOG
     */
     fir_compiler_0 u_fir_compiler_0 (
-        .aclk(clk_100MHz),                              // input wire clk
-        .s_axis_data_tvalid(data_ready),  // input wire s_axis_data_tvalid
-        .s_axis_data_tready(),  // output wire s_axis_data_tready
-        .s_axis_data_tdata(ecg_data_received),    // input wire [15 : 0] s_axis_data_tdata
-        .m_axis_data_tvalid(data_filtered_0),  // output wire m_axis_data_tvalid
-        .m_axis_data_tdata(filtered_data_0)    // output wire [15 : 0] m_axis_data_tdata
+        .aclk(clk_100MHz),
+        .s_axis_data_tvalid(mux_data_valid_out),
+        .s_axis_data_tready(fir_bp_s_tready),
+        .s_axis_data_tdata(mux_data_out),
+        .m_axis_data_tvalid(data_filtered_0),
+        .m_axis_data_tdata(filtered_data_0)
     );
 
     /*
      * FIR NOTCH FILTER INSTANCE FROM IP CATALOG
     */
     fir_compiler_notch u_fir_compiler_notch (
-        .aclk(clk_100MHz),                              // input wire aclk
-        .s_axis_data_tvalid(data_filtered_0),  // input wire s_axis_data_tvalid
-        .s_axis_data_tready(),  // output wire s_axis_data_tready
-        .s_axis_data_tdata(filtered_data_0),    // input wire [15 : 0] s_axis_data_tdata
-        .m_axis_data_tvalid(data_ready_notch),  // output wire m_axis_data_tvalid
-        .m_axis_data_tdata(filtered_data_1)    // output wire [15 : 0] m_axis_data_tdata
+        .aclk(clk_100MHz),
+        .s_axis_data_tvalid(mux_data_valid_out),
+        .s_axis_data_tready(fir_notch_s_tready),
+        .s_axis_data_tdata(mux_data_out),
+        .m_axis_data_tvalid(data_ready_notch),
+        .m_axis_data_tdata(filtered_data_1)
     );
 
     /*
@@ -228,7 +382,7 @@ module top_ecg (
         .clk(clk_100MHz),
         .rst_n(rst_n),
         .sample_valid_in(data_ready_notch),
-        .data_in(filtered_data_1),
+        .data_in($signed(filtered_data_1)),
         .data_out(data_baseline),
         .sample_valid_out(data_ready_baseline)
     );
@@ -297,8 +451,8 @@ module top_ecg (
     differentiator u_differentiator (
         .clk              (clk_100MHz),
         .rst_n            (rst_n),
-        .sample_valid_in  (data_ready_notch), // Impuls z filtru Bandpass
-        .data_in          (filtered_data_1), // Dane z filtru Bandpass
+        .sample_valid_in  (data_ready_notch),
+        .data_in          ($signed(filtered_data_1)),
         .data_out         (diff_data_out),   // Wynik pochodnej
         .sample_valid_out (data_ready_diff)  // Impuls gotowości dla kolejnego bloku
     );
@@ -351,24 +505,54 @@ module top_ecg (
      * BPM CALCULATOR
      * Calculates Heart Rate based on the time distance between R-peaks.
     */
+    // BPM liczy odstęp miedzy R-peakami w PRÓBKACH sygnału po filtrach (500 Hz
+    // w torze DSP), a NIE impulsami start_sampling. Przy symulacji z mala wartoscia
+    // TICK_GEN_DIV (np. 400) start_sampling nadal tyka co 2 ms, a probki BRAM co
+    // 4 us -> sample_count liczony po start_sampling nie dochodzil do poprawnego RR.
     bpm_calculator u_bpm_calculator (
         .clk             (clk_100MHz),
         .rst_n           (rst_n),
-        .sample_tick     (start_sampling),        // Impuls 500 Hz z timera
-        .r_peak_detected (r_peak_detected_pulse), // Wynik algorytmu Pan-Tompkinsa
-        .bpm             (current_bpm),           // 8-bitowy wynik (do wyświetlenia)
-        .bpm_valid       (bpm_updated)            // Flaga nowej wartości
+        .sample_tick     (data_ready_notch),
+        .r_peak_detected (r_peak_detected_pulse),
+        .min_rr_samples  (mode_control[4] ? 11'd220 : 11'd150),
+        .bpm             (current_bpm),
+        .bpm_valid       (bpm_updated),
+        .bpm_instant     (current_bpm_instant),
+        .bpm_instant_valid (bpm_instant_updated)
     );
 
     /*
-     * DERIVATIVE DELAY BUFFER
-     * Synchronize signals with PAN_TOMPKINS algorithm to STEMI detector.
-     * Pipeline latency = 4 cycles
-     * Algorithm delay = 40 cycles
-     * Combined delay = 44 cycles
+     * STEMI uses ST/T morphology, so a second local maximum in the same beat
+     * must not restart the ST measurement FSM. BPM has its own RR gate; this
+     * one keeps the STEMI detector on one accepted R event per cardiac beat.
+    */
+    always_ff @(posedge clk_100MHz or negedge rst_n) begin
+        if (!rst_n) begin
+            stemi_rr_counter <= 11'd220;
+            stemi_have_reference_peak <= 1'b0;
+        end
+        else begin
+            if (data_ready_mwi && stemi_rr_counter < 11'd2047)
+                stemi_rr_counter <= stemi_rr_counter + 1'b1;
+
+            if (r_peak_detected_pulse &&
+                (!stemi_have_reference_peak || stemi_rr_counter >= stemi_min_rr_samples)) begin
+                stemi_rr_counter <= '0;
+                stemi_have_reference_peak <= 1'b1;
+            end
+        end
+    end
+
+    assign r_peak_for_stemi = r_peak_detected_pulse &&
+                              (!stemi_have_reference_peak ||
+                               stemi_rr_counter >= stemi_min_rr_samples);
+
+    /*
+     * DERIVATIVE / ECG DELAY BUFFERS
+     * Wyrównują strumień EKG/pochodnej z impulsem r_peak_detected.
     */
     delay_buffer #(
-        .DELAY(44)
+        .DELAY(4)
     ) u_delay_buffer_deriv (
         .clk              (clk_100MHz),
         .rst_n            (rst_n),
@@ -378,19 +562,17 @@ module top_ecg (
         .sample_valid_out (deriv_valid_out_buff)
     );
 
-    /*
-     * ECG DATA DELAY BUFFER
-     * Synchronize signals with PAN_TOMPKINS algorithm to STEMI detector.
-     * Pipeline latency = 5 cycles (include differentiator!)
-     * Algorithm delay = 40 cycles
-     * Combined delay = 45 cycles
-    */
+   /*
+    * ECG DATA BUFFER
+    * Detektor STEMI dostaje sygnal po filtrach; baseline_restore zostaje dla VGA/UART.
+   */
    delay_buffer #(
-        .DELAY(45)
+        .DELAY(5)
     ) u_delay_buffer_ecg (
         .clk              (clk_100MHz),
         .rst_n            (rst_n),
-        .data_in          (filtered_data_1),
+        // STEMI analizuje sygnal po filtrach; baseline_restore zostaje dla VGA/UART.
+        .data_in          ($signed(filtered_data_1)),
         .sample_valid_in  (data_ready_notch),
         .data_out         (ecg_data_buff),
         .sample_valid_out (ecg_valid_out_buff)
@@ -403,12 +585,13 @@ module top_ecg (
     stemi_detector u_stemi_detector (
         .clk              (clk_100MHz),
         .rst_n            (rst_n),
+        .clear            (!stemi_detection_enabled),
         .ecg_data_in      (ecg_data_buff),
         .derivative_data_in (deriv_data_buff),
         .data_sample_valid_in (ecg_valid_out_buff),
         .derivative_sample_valid_in(deriv_valid_out_buff),
-        .r_peak_detected  (r_peak_detected_pulse),
-        .stemi_alarm      (stemi_alarm)
+        .r_peak_detected  (r_peak_for_stemi),
+        .stemi_alarm      (stemi_alarm_raw)
     );
 
     vga_ui_manager u_vga_ui (
@@ -417,7 +600,9 @@ module top_ecg (
         .rst_n(rst_n),
         .current_bpm(current_bpm),
         .bpm_valid(bpm_updated),
-        .leads_off(leads_off),    
+        .current_bpm_instant(current_bpm_instant),
+        .bpm_instant_valid(bpm_instant_updated),
+        .leads_off(effective_leads_off),
         .mouse_x(mouse_x_pos),
         .mouse_y(mouse_y_pos),
         .mouse_left(mouse_left_click),
