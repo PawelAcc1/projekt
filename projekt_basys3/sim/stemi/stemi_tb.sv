@@ -100,8 +100,11 @@ module stemi_tb; // <-- Zmieniona nazwa, aby idealnie pasowała do skryptu!
         .rst_n(rst_n),
         .sample_tick(sample_valid_in),
         .r_peak_detected(r_peak_detected),
+        .min_rr_samples(11'd220),
         .bpm(bpm_out),
-        .bpm_valid(bpm_valid_out)
+        .bpm_valid(bpm_valid_out),
+        .bpm_instant(),
+        .bpm_instant_valid()
     );
 
     // Generator głównego zegara 50MHz
