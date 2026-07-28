@@ -7,6 +7,8 @@ module vga_ui_manager (
     
     input  logic [7:0] current_bpm,
     input  logic bpm_valid,
+    input  logic [7:0] current_bpm_instant,
+    input  logic bpm_instant_valid,
     input  logic [1:0] leads_off,     
     
     input  logic [11:0] mouse_x,
@@ -68,6 +70,9 @@ module vga_ui_manager (
         .rtc_seconds(rtc_seconds), 
         .current_bpm(current_bpm), 
         .bpm_valid(bpm_valid),
+        .current_bpm_instant(current_bpm_instant),
+        .bpm_instant_valid(bpm_instant_valid),
+        .suppress_rhythm_alarms(1'b0),
         .leads_off(leads_off),
         .hcount(vga_in.hcount), 
         .vcount(vga_in.vcount),
