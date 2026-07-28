@@ -2,8 +2,12 @@
 
 module adaptive_threshold #(
     parameter int WIDTH_IN = 39,
-    // 200 ms przy f_s = 500 Hz to dokładnie 100 próbek (okres refrakcji)
-    parameter int BLANKING_PERIOD = 100 
+    parameter int BLANKING_PERIOD = 100,
+    parameter int WARMUP_SAMPLES = 700,
+    // Po zakonczeniu warmup zerujemy spki/npki/threshold (transient MWI/FIR
+    // przy threshold=0 zawyza prog) i uczymy sie jeszcze POST_WARMUP_LEARN probek
+    // zanim wystawiamy r_peak_detected.
+    parameter int POST_WARMUP_LEARN = 200
 )(
     input  logic clk,
     input  logic rst_n,
@@ -25,6 +29,15 @@ module adaptive_threshold #(
     // Licznik okresu ślepego (refrakcji)
     logic [7:0] blanking_counter;
 
+    // Licznik rozgrzewki
+    logic [$clog2(WARMUP_SAMPLES+1)-1:0] warmup_counter;
+    logic [$clog2(WARMUP_SAMPLES+POST_WARMUP_LEARN+1)-1:0] learn_counter;
+    logic warmup_done;
+    logic detect_enable;
+
+    assign warmup_done    = (warmup_counter >= WARMUP_SAMPLES);
+    assign detect_enable  = (learn_counter >= WARMUP_SAMPLES + POST_WARMUP_LEARN);
+
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             mwi_d1 <= '0;
@@ -33,12 +46,28 @@ module adaptive_threshold #(
             npki <= '0;
             threshold <= '0;
             blanking_counter <= '0;
+            warmup_counter <= '0;
+            learn_counter <= '0;
             r_peak_detected <= 1'b0;
         end 
         else begin
             r_peak_detected <= 1'b0; // Domyślnie brak piku
             
             if (sample_valid_in) begin
+                if (learn_counter < WARMUP_SAMPLES + POST_WARMUP_LEARN)
+                    learn_counter <= learn_counter + 1'b1;
+
+                // Koniec fazy warmup: reset progu (transient MWI zawyzal spki)
+                if (warmup_counter == WARMUP_SAMPLES - 1) begin
+                    spki      <= '0;
+                    npki      <= '0;
+                    threshold <= '0;
+                    blanking_counter <= '0;
+                end
+
+                if (!warmup_done)
+                    warmup_counter <= warmup_counter + 1'b1;
+
                 // Przesunięcie okna historii
                 mwi_d1 <= data_in;
                 mwi_d2 <= mwi_d1;
@@ -53,7 +82,12 @@ module adaptive_threshold #(
                     
                     // Czy to prawdziwy QRS (powyżej progu)?
                     if ((mwi_d1 > threshold) && (blanking_counter == 0)) begin
-                        r_peak_detected <= 1'b1;
+                        // Impuls wystawiamy dopiero PO rozgrzewce, natomiast
+                        // adaptację spki i refrakcję prowadzimy od początku,
+                        // aby próg był już dobrze ustawiony, gdy zaczniemy ufać detekcjom.
+                        if (detect_enable) begin
+                            r_peak_detected <= 1'b1;
+                        end
                         blanking_counter <= BLANKING_PERIOD;
                         
                         // Aktualizacja SPKI: spki = spki - spki/8 + pik/8
