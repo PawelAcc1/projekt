@@ -20,7 +20,7 @@ module squarer #(
             sample_valid_out <= 1'b0;
         end 
         else begin
-            // Domyślny stan flagi valid (impuls 1-taktowy)
+            // Domyślny stan flagi valid
             sample_valid_out <= 1'b0; 
             
             if (sample_valid_in) begin

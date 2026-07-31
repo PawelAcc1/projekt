@@ -32,7 +32,7 @@ module recording_memory #(
     enum logic [1:0] {IDLE, RECORD, FULL} state, state_nxt;
 
     // ==============================================================
-    // 1. BLOK FSM I LICZNIKÓW (Z resetem asynchronicznym)
+    // 1. BLOK FSM I LICZNIKÓW 
     // ==============================================================
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -46,7 +46,7 @@ module recording_memory #(
     end
 
     // ==============================================================
-    // 2. DEDYKOWANY BLOK BRAM (Czysto synchroniczny - wymóg Vivado!)
+    // 2. DEDYKOWANY BLOK BRAM 
     // ==============================================================
     always_ff @(posedge clk) begin
         // BRAM write condition 

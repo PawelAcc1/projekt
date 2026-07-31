@@ -33,45 +33,45 @@ set xdc_files {
 
 # Specify SystemVerilog design files location   -- EDIT
 set sv_files {
-    ../rtl/vga_pkg.sv
-    ../rtl/vga_timing.sv
-    ../rtl/draw_grid.sv
+    ../rtl/GUI/vga_pkg.sv
+    ../rtl/GUI/vga_timing.sv
+    ../rtl/GUI/draw_grid.sv
     ../rtl/top_ecg.sv
-    ../rtl/sampling_timer.sv
-    ../rtl/i2c_master.sv
-    ../rtl/ring_buffer.sv
-    ../rtl/baseline_restore.sv
-    ../rtl/vga_formatter.sv
-    ../rtl/render_signal.sv
-    ../rtl/draw_mouse.sv
-    ../rtl/vga_if.sv
-    ../rtl/adaptive_threshold.sv
-    ../rtl/alarm_logger.sv
-    ../rtl/bpm_calculator.sv
-    ../rtl/differentiator.sv
-    ../rtl/moving_window_integration.sv
+    ../rtl/i2c/sampling_timer.sv
+    ../rtl/i2c/i2c_master.sv
+    ../rtl/GUI/ring_buffer.sv
+    ../rtl/GUI/baseline_restore.sv
+    ../rtl/GUI/vga_formatter.sv
+    ../rtl/GUI/render_signal.sv
+    ../rtl/GUI/draw_mouse.sv
+    ../rtl/GUI/vga_if.sv
+    ../rtl/algorythms/adaptive_threshold.sv
+    ../rtl/GUI/alarm_logger.sv
+    ../rtl/bpm/bpm_calculator.sv
+    ../rtl/algorythms/differentiator.sv
+    ../rtl/algorythms/moving_window_integration.sv
     ../rtl/rtc_clock.sv
-    ../rtl/squarer.sv
-    ../rtl/vga_7seg_digit.sv
-    ../rtl/vga_bpm_display.sv
-    ../rtl/vga_ui_manager.sv
-    ../rtl/front_rom.sv
-    ../rtl/vga_text_renderer.sv
-    ../rtl/delay_buffer.sv
-    ../rtl/stemi_detector.sv
-    ../rtl/uart_rx.sv
-    ../rtl/uart_tx.sv
-    ../rtl/recording_memory.sv
-    ../rtl/hex_to_ascii.sv
-    ../rtl/tick_generator.sv
+    ../rtl/algorythms/squarer.sv
+    ../rtl/GUI/vga_7seg_digit.sv
+    ../rtl/GUI/vga_bpm_display.sv
+    ../rtl/GUI/vga_ui_manager.sv
+    ../rtl/GUI/front_rom.sv
+    ../rtl/GUI/vga_text_renderer.sv
+    ../rtl/algorythms/delay_buffer.sv
+    ../rtl/algorythms/stemi_detector.sv
+    ../rtl/recorder/uart_rx.sv
+    ../rtl/recorder/uart_tx.sv
+    ../rtl/recorder/recording_memory.sv
+    ../rtl/recorder/hex_to_ascii.sv
+    ../rtl/recorder/tick_generator.sv
     rtl/top_ecg_basys3.sv
 }
 
 # Specify Verilog design files location         -- EDIT
 set verilog_files {
-    ../rtl/clk_wiz_0.v
-    ../rtl/clk_wiz_0_clk_wiz.v
-    ../rtl/debounce.v
+    ../rtl/clock_domain/clk_wiz_0.v
+    ../rtl/clock_domain/clk_wiz_0_clk_wiz.v
+    ../rtl/recorder/debounce.v
 }
 
 # Specify IP Core files location
@@ -86,12 +86,12 @@ set ip_core_files {
 
 # Specify VHDL design files location            -- EDIT
 set vhdl_files {
-   ../rtl/Ps2Interface.vhd
-   ../rtl/MouseCtl.vhd
-   ../rtl/MouseDisplay.vhd
+   ../rtl/mouse/Ps2Interface.vhd
+   ../rtl/mouse/MouseCtl.vhd
+   ../rtl/mouse/MouseDisplay.vhd
 }
 
 # Specify files for a memory initialization     -- EDIT
 set mem_files {
-    ../rtl/bpm_rom.hex
+    ../rtl/bpm/bpm_rom.hex
 }

@@ -4,9 +4,6 @@ module adaptive_threshold #(
     parameter int WIDTH_IN = 39,
     parameter int BLANKING_PERIOD = 100,
     parameter int WARMUP_SAMPLES = 700,
-    // Po zakonczeniu warmup zerujemy spki/npki/threshold (transient MWI/FIR
-    // przy threshold=0 zawyza prog) i uczymy sie jeszcze POST_WARMUP_LEARN probek
-    // zanim wystawiamy r_peak_detected.
     parameter int POST_WARMUP_LEARN = 200
 )(
     input  logic clk,
@@ -57,7 +54,7 @@ module adaptive_threshold #(
                 if (learn_counter < WARMUP_SAMPLES + POST_WARMUP_LEARN)
                     learn_counter <= learn_counter + 1'b1;
 
-                // Koniec fazy warmup: reset progu (transient MWI zawyzal spki)
+                // Koniec fazy warmup: reset progu
                 if (warmup_counter == WARMUP_SAMPLES - 1) begin
                     spki      <= '0;
                     npki      <= '0;
@@ -101,7 +98,7 @@ module adaptive_threshold #(
                 end
 
                 // Aktualizacja progu w każdym takcie: threshold = npki + 0.25 * (spki - npki)
-                // Zabezpieczenie na wypadek, gdyby spki < npki (zapobiega underflow na liczbach unsigned)
+                // Zabezpieczenie na wypadek, gdyby spki < npki
                 if (spki > npki) begin
                     threshold <= npki + ((spki - npki) >> 2);
                 end else begin

@@ -15,9 +15,6 @@ module bpm_calculator (
 
     localparam logic [10:0] MAX_RR_SAMPLES = 11'd2000;
 
-    // Odrzuca dodatkowe lokalne maksima z jednego zespolu QRS.
-    // Top podaje 220 probek dla trybow BRAM oraz 150 dla realnych elektrod,
-    // zeby nie uciac bardzo szybkiej tachykardii pacjenta.
     logic [10:0] active_min_rr_samples;
     assign active_min_rr_samples = (min_rr_samples == 11'd0) ? 11'd150 : min_rr_samples;
 
@@ -55,7 +52,7 @@ module bpm_calculator (
                 if (sample_count < 11'd2047)
                     sample_count <= sample_count + 1;
 
-                // timeout: brak R przez 2000 probek (tylko RAZ, na ticku probki)
+                // timeout: brak R przez 2000 probek
                 if (!timeout_fired && (sample_count > MAX_RR_SAMPLES)) begin
                     bpm           <= 8'd0;
                     bpm_valid     <= 1'b1;
@@ -74,9 +71,6 @@ module bpm_calculator (
                 automatic logic [11:0] next_history_sum;
                 automatic logic [3:0] next_history_count;
 
-                // Zbyt bliskie piki sa zwykle drugim lokalnym maksimum tego samego QRS.
-                // Nie zerujemy wtedy licznika, bo kolejny prawdziwy R-peak mialby
-                // sztucznie za krotki odstep RR i BPM zostalby na 0.
                 if (sample_count >= active_min_rr_samples && sample_count <= MAX_RR_SAMPLES) begin
                     timeout_fired <= 1'b0;
                     if (!have_reference_peak) begin

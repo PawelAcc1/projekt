@@ -26,7 +26,6 @@ module alarm_logger (
 );
 
     // --- 1. SYNCHRONIZATOR SYGNAŁÓW ZEWNĘTRZNYCH ---
-    // Zapobiega metastabilności układu od szumów na kablach
     logic [1:0] leads_sync_1, leads_sync_2;
     always_ff @(posedge clk_100MHz or negedge rst_n) begin
         if (!rst_n) begin
@@ -47,7 +46,6 @@ module alarm_logger (
             stable_timer <= '0;
             is_stable <= 1'b0;
         end else begin
-            // Używamy zsynchronizowanego sygnału!
             if (leads_sync_2 != 2'b00) begin
                 stable_timer <= '0;
                 is_stable <= 1'b0;

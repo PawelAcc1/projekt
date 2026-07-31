@@ -15,13 +15,6 @@ import vga_pkg::*;
 localparam logic [11:0] SIGNAL_COLOUR = 12'hf_0_0;
 localparam logic [11:0] LINE_WIDTH    = 12'd1;   // dodatkowa grubość linii (px)
 
-/*
- * Pozycja pionowa próbki na ekranie.
- * Próbka 12-bit (0..4095) mapowana proporcjonalnie na 768 linii: 768/4096 = 3/16,
- *   y = (VER_PIXELS-1) - ((data * 3) >> 4)   -> 0..767, oś Y skierowana w dół.
- * ecg_data_read jest opóźnione o 1 takt względem read_address (czytanie z bufora),
- * dlatego sygnały VGA są tu również opóźnione o 1 takt (stopień s1), aby się zgrać.
- */
 logic [13:0] data_x3;
 logic [11:0] y_cur;        // y bieżącej kolumny (zgrane ze stopniem s1)
 

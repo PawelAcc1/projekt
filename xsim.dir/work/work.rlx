@@ -1,0 +1,12 @@
+0.7
+2020.2
+Nov 14 2025
+19:37:27
+C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/fpga/rtl/top_ecg_basys3.sv,1782488364,systemVerilog,,C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/sim/tb_pan_tompkins/tb_pan_tompkins.sv,,top_ecg_basys3,,,,,,,,
+C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/alarm_logger.sv,1783512357,systemVerilog,,C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/vga_if.sv,,alarm_logger,,,,,,,,
+C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/bpm_calculator.sv,1783513870,systemVerilog,,C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/top_ecg.sv,,bpm_calculator,,,,,,,,
+C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/top_ecg.sv,1783516901,systemVerilog,,C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/fpga/rtl/top_ecg_basys3.sv,,top_ecg,,,,,,,,
+C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/vga_if.sv,1778775284,systemVerilog,,C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/vga_pkg.sv,,vga_if,,,,,,,,
+C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/vga_pkg.sv,1779472127,systemVerilog,C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/vga_ui_manager.sv,C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/vga_ui_manager.sv,,vga_pkg,,,,,,,,
+C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/vga_ui_manager.sv,1783512366,systemVerilog,,C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/bpm_calculator.sv,,vga_ui_manager,,,,,,,,
+,,,,,,,,,,,,,,

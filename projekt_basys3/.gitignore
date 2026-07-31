@@ -38,3 +38,5 @@ xcelium.d
 xrun.log
 
 results/
+
+*.jou

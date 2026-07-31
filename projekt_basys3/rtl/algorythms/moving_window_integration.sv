@@ -9,8 +9,6 @@ module moving_window_integration #(
     input  logic sample_valid_in,
     input  logic [WIDTH_IN-1:0] data_in,
     
-    // Szerokość zwiększona o 7 bitów, ponieważ max suma 75 próbek 
-    // może wzrosnąć maksymalnie o tyle (2^6 < 75 < 2^7)
     output logic [WIDTH_IN+6:0] data_out,
     output logic sample_valid_out
 );
@@ -38,13 +36,13 @@ module moving_window_integration #(
                 // delay_line[WINDOW_SIZE-1] to próbka x[n-N]
                 running_sum <= running_sum + data_in - delay_line[WINDOW_SIZE-1];
                 
-                // Przesunięcie rejestru (wprowadzenie nowej próbki na początek linii)
+                // Przesunięcie rejestru 
                 for (int i = WINDOW_SIZE-1; i > 0; i--) begin
                     delay_line[i] <= delay_line[i-1];
                 end
                 delay_line[0] <= data_in;
                 
-                // Wystawienie zaimportowanego i zaktualizowanego wyniku na wyjście (w pełni potokowo)
+                // Wystawienie zaimportowanego i zaktualizowanego wyniku na wyjście
                 data_out <= running_sum + data_in - delay_line[WINDOW_SIZE-1];
                 sample_valid_out <= 1'b1;
             end

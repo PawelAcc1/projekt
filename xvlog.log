@@ -1,1 +1,6 @@
-ERROR: [XSIM 43-3342] Unable to open project file "tb_pan_tompkins.prj".
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/bpm_calculator.sv" into library work
+INFO: [VRFC 10-311] analyzing module bpm_calculator
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/rtl/top_ecg.sv" into library work
+INFO: [VRFC 10-311] analyzing module top_ecg
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/pbuko/Desktop/SystemVerilog/project_ecg/projekt_basys3/fpga/rtl/top_ecg_basys3.sv" into library work
+INFO: [VRFC 10-311] analyzing module top_ecg_basys3
