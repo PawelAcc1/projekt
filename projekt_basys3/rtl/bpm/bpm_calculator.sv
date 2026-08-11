@@ -13,7 +13,7 @@ module bpm_calculator (
     output logic bpm_instant_valid
 );
 
-    localparam logic [10:0] MAX_RR_SAMPLES = 11'd2000;
+    localparam logic [10:0] MAX_RR_SAMPLES = 11'd90000;
 
     logic [10:0] active_min_rr_samples;
     assign active_min_rr_samples = (min_rr_samples == 11'd0) ? 11'd150 : min_rr_samples;
