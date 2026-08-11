@@ -299,3 +299,7 @@ set_property PACKAGE_PIN B17 [get_ports PS2Data]
 ## Configuration options, can be used for all designs
 set_property CONFIG_VOLTAGE 3.3 [current_design]
 set_property CFGBVS VCCO [current_design]
+
+
+# --- Ignorowanie opóźnień między różnymi domenami zegarowymi (CDC) ---
+set_clock_groups -asynchronous -group [get_clocks clk65MHz_clk_wiz_0] -group [get_clocks clk100MHz_clk_wiz_0]
