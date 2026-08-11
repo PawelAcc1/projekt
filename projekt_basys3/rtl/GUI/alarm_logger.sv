@@ -84,7 +84,7 @@ module alarm_logger (
 
     logic [2:0] current_alarm; // 0=OK, 1=BRADY, 2=TACHY, 3=ARYTMIA, 4=STEMI
     assign current_alarm = is_stemi      ? 3'd4 : 
-                           is_arrhythmia ? 3'd3 : 
+                           is_arrhythmia ? 3'd3 :
                            is_tachy      ? 3'd2 : 
                            is_brady      ? 3'd1 : 3'd0;
 
