@@ -88,6 +88,7 @@ module top_ecg #(
     wire               fir_notch_s_tready;
 
     wire [10:0] stemi_min_rr_samples;
+    wire [2:0]  vga_gain_shift;
     logic [10:0] stemi_rr_counter;
     logic        stemi_have_reference_peak;
 
@@ -121,8 +122,9 @@ module top_ecg #(
     assign {r,g,b} = if_mouse.rgb;
     assign effective_leads_off = mode_control[4] ? 2'b00 : leads_off;
     assign stemi_min_rr_samples = mode_control[4] ? 11'd220 : 11'd150;
+    assign vga_gain_shift = mode_control[4] ? 3'd2 : 3'd0;
     assign stemi_mode_selected = (mode_control == 5'b10001);
-    assign stemi_detection_enabled = !mode_control[4] || stemi_mode_selected;
+    assign stemi_detection_enabled = stemi_mode_selected;
     assign stemi_alarm = stemi_detection_enabled && stemi_alarm_raw;
 
     /*
@@ -394,6 +396,7 @@ module top_ecg #(
         .clk(clk_100MHz),
         .rst_n(rst_n),
         .sample_valid_in(data_ready_baseline),
+        .gain_lshift(vga_gain_shift),
         .data_in(data_baseline),
         .data_out(display_data),
         .data_ready(data_write_enable)
@@ -528,6 +531,10 @@ module top_ecg #(
     */
     always_ff @(posedge clk_100MHz or negedge rst_n) begin
         if (!rst_n) begin
+            stemi_rr_counter <= 11'd220;
+            stemi_have_reference_peak <= 1'b0;
+        end
+        else if (!stemi_detection_enabled) begin
             stemi_rr_counter <= 11'd220;
             stemi_have_reference_peak <= 1'b0;
         end
