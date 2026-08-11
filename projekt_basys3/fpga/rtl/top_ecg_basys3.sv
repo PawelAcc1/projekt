@@ -18,7 +18,7 @@ module top_ecg_basys3 (
         input  wire btnU,
         input  wire [4:0] sw,
         inout  wire [7:2] JA,
-        input  wire [7:0] JC, // DODANE: Cały port JC dla czujnika
+        input  wire [1:0] JC, // Wejścia leads-off z czujnika
         inout  wire PS2Clk,
         inout  wire PS2Data,
         input  wire RsRx,

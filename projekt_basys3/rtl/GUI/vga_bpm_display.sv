@@ -68,16 +68,19 @@ module vga_bpm_display (
 
     localparam int HEART_X = 855; 
     localparam int HEART_Y = 180; 
-    localparam int SCALE = 5;     
+    localparam int SCALE = 4;     
 
+    logic [3:0] col, row;
     logic heart_pixel;
     always_comb begin
         heart_pixel = 1'b0;
+        col = '0;
+        row = '0;
         if (hcount >= HEART_X && hcount < HEART_X + 10*SCALE &&
             vcount >= HEART_Y && vcount < HEART_Y + 10*SCALE) begin
             
-            int col = (hcount - HEART_X) / SCALE;
-            int row = (vcount - HEART_Y) / SCALE;
+            col = (hcount - HEART_X) >> 2;
+            row = (vcount - HEART_Y) >> 2;
             if (heart_map[row][9 - col]) heart_pixel = 1'b1;
         end
     end
