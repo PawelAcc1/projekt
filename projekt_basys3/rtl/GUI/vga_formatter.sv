@@ -1,11 +1,12 @@
 module vga_formatter #(
     parameter int IN_WIDTH    = 16, // szerokość słowa z FIR (signed)
     parameter int OUT_WIDTH   = 12, // szerokość danych bufora/wyświetlania (unsigned)
-    parameter int GAIN_LSHIFT = 2  // wzmocnienie składowej zmiennej (x 2^GAIN); 4 = x16
+    parameter int GAIN_LSHIFT = 0  // AC gain: x(2^GAIN); 0 = x1
 )(
     input  logic clk,
     input  logic rst_n,
     input  logic sample_valid_in,
+    input  logic [2:0] gain_lshift,
     input  logic signed [IN_WIDTH-1:0]  data_in,
     output logic [OUT_WIDTH-1:0] data_out,
     output logic data_ready
@@ -16,7 +17,7 @@ module vga_formatter #(
 
     logic signed [31:0]         centered;
 
-    assign centered = (32'(data_in) <<< GAIN_LSHIFT) + MID;
+    assign centered = (32'(data_in) <<< gain_lshift) + MID;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
