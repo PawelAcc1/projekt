@@ -9,11 +9,10 @@ module alarm_logger (
     input  logic [5:0] rtc_minutes,
     input  logic [5:0] rtc_seconds,
     input  logic [7:0] current_bpm,
-    input  logic bpm_valid,
     input  logic [7:0] current_bpm_instant,
     input  logic bpm_instant_valid,
     input  logic suppress_rhythm_alarms,
-    input  logic [1:0] leads_off, // Wejście z fizycznych pinów JC
+    input  logic [1:0] leads_off,
 
     input  logic [11:0] hcount,
     input  logic [11:0] vcount,
@@ -37,80 +36,65 @@ module alarm_logger (
         end
     end
 
-    // --- 2. LEADS-OFF & BLANKING TIMER (8 Sekund) ---
-    logic [29:0] stable_timer;
-    logic is_stable;
+    // --- 2. LEADS-OFF ---
+    logic leads_connected;
+    assign leads_connected = (leads_sync_2 == 2'b00);
 
-    always_ff @(posedge clk_100MHz or negedge rst_n) begin
-        if (!rst_n) begin
-            stable_timer <= '0;
-            is_stable <= 1'b0;
-        end else begin
-            if (leads_sync_2 != 2'b00) begin
-                stable_timer <= '0;
-                is_stable <= 1'b0;
-            end else if (stable_timer < 30'd800_000_000) begin
-                stable_timer <= stable_timer + 1'b1;
-                is_stable <= 1'b0;
-            end else begin
-                is_stable <= 1'b1;
-            end
-        end
-    end
-
-    // --- 3. DETEKCJA MEDYCZNA ---
-    logic [7:0] prev_bpm;
-    logic [7:0] bpm_diff;
+    // --- 3. DETEKCJA MEDYCZNA (KOMBINACYJNA) ---
     logic [7:0] prev_bpm_instant;
     logic [7:0] bpm_instant_diff;
     
-    assign bpm_diff = (current_bpm > prev_bpm) ? (current_bpm - prev_bpm) : (prev_bpm - current_bpm);
     assign bpm_instant_diff = (current_bpm_instant > prev_bpm_instant)
                             ? (current_bpm_instant - prev_bpm_instant)
                             : (prev_bpm_instant - current_bpm_instant);
 
-    logic is_brady, is_tachy, is_arrhythmia, is_stemi;
-    assign is_brady      = (!suppress_rhythm_alarms &&
-                            current_bpm > 0 && current_bpm < 8'd50);
-    assign is_tachy      = (!suppress_rhythm_alarms &&
-                            current_bpm > 8'd100);
-    assign is_arrhythmia = (!suppress_rhythm_alarms &&
-                            bpm_instant_valid &&
-                            current_bpm_instant != 0 &&
-                            prev_bpm_instant != 0 &&
-                            bpm_instant_diff > 8'd15);
-    assign is_stemi      = (stemi_alarm);
+    logic is_brady_c, is_tachy_c, is_arrhythmia_c, is_stemi_c;
+    assign is_brady_c      = (leads_connected && !suppress_rhythm_alarms && current_bpm > 0 && current_bpm < 8'd50);
+    assign is_tachy_c      = (leads_connected && !suppress_rhythm_alarms && current_bpm > 8'd100);
+    assign is_arrhythmia_c = (leads_connected && !suppress_rhythm_alarms && bpm_instant_valid && current_bpm_instant != 0 && prev_bpm_instant != 0 && bpm_instant_diff > 8'd15);
+    assign is_stemi_c      = (leads_connected && stemi_alarm);
 
+    logic [2:0] alarm_code_comb; // 0=OK, 1=BRADY, 2=TACHY, 3=ARYTMIA, 4=STEMI
+    assign alarm_code_comb = is_stemi_c      ? 3'd4 : 
+                             is_arrhythmia_c ? 3'd3 :
+                             is_tachy_c      ? 3'd2 : 
+                             is_brady_c      ? 3'd1 : 3'd0;
 
-    logic [2:0] current_alarm; // 0=OK, 1=BRADY, 2=TACHY, 3=ARYTMIA, 4=STEMI
-    assign current_alarm = is_stemi      ? 3'd4 : 
-                           is_arrhythmia ? 3'd3 :
-                           is_tachy      ? 3'd2 : 
-                           is_brady      ? 3'd1 : 3'd0;
-
-    // --- REJESTRY ŚLEDZĄCE ---
+    // --- REJESTRY ŚLEDZĄCE (PIPELINE ZMNIEJSZAJĄCY TIMING) ---
+    logic [2:0] current_alarm;
     logic [2:0] prev_alarm;
+    
+    // Zatrzaskujemy flagi alarmów do pamięci, aby układ zdążył wygenerować stringa
+    logic is_brady_reg, is_tachy_reg, is_arrhythmia_reg, is_stemi_reg;
     
     always_ff @(posedge clk_100MHz or negedge rst_n) begin
         if (!rst_n) begin
-            prev_bpm <= 8'd0;
             prev_bpm_instant <= 8'd0;
+            current_alarm <= 3'd0;
             prev_alarm <= 3'd0;
+            is_brady_reg <= 1'b0;
+            is_tachy_reg <= 1'b0;
+            is_arrhythmia_reg <= 1'b0;
+            is_stemi_reg <= 1'b0;
         end else begin
-            if (bpm_valid) begin
-                prev_bpm <= current_bpm;
-            end
             if (bpm_instant_valid && current_bpm_instant != 0) begin
                 prev_bpm_instant <= current_bpm_instant;
             end
             
-            prev_alarm <= current_alarm; 
+            // PIPELINE: Ucinamy ścieżkę z 10 poziomów na zaledwie 4.
+            // Najpierw bezpiecznie zatrzaskujemy wyliczony przed chwilą kod.
+            current_alarm <= alarm_code_comb;
+            prev_alarm <= current_alarm;
+            
+            is_brady_reg <= is_brady_c;
+            is_tachy_reg <= is_tachy_c;
+            is_arrhythmia_reg <= is_arrhythmia_c;
+            is_stemi_reg <= is_stemi_c;
         end
     end
 
-    // --- GENERATOR IMPULSU ZAPISU (Edge Detection) ---
+    // --- GENERATOR IMPULSU ZAPISU ---
     logic trigger_log;
-    
     assign trigger_log = (current_alarm != prev_alarm) && (current_alarm != 3'd0);
 
     // --- 4. PRZYGOTOWANIE TEKSTU DLA CZCIONKI ---
@@ -126,13 +110,12 @@ module alarm_logger (
     assign b3 = (current_bpm % 10) + 8'h30;
 
     always_comb begin
-        if      (is_stemi)      str_type = 88'h5354454D49202020202020;
-        else if (is_arrhythmia) str_type = 88'h415259544D494120202020;
-        else if (is_tachy)      str_type = 88'h54414348594B4152444941;
-        else if (is_brady)      str_type = 88'h42524144594B4152444941;
-        // "STEMI" (5 znaków uzupelnione spacjami)
-        // Puste 11 spacji
-        else                    str_type = 88'h2020202020202020202020;
+        // Używamy zrejestrowanych flag, by napis czekał na trigger zapisu do pamięci
+        if      (is_stemi_reg)      str_type = 88'h5354454D49202020202020;
+        else if (is_arrhythmia_reg) str_type = 88'h415259544D494120202020;
+        else if (is_tachy_reg)      str_type = 88'h54414348594B4152444941;
+        else if (is_brady_reg)      str_type = 88'h42524144594B4152444941;
+        else                        str_type = 88'h2020202020202020202020;
     end
 
     // --- 5. PAMIĘĆ LOGÓW ---
@@ -154,6 +137,26 @@ module alarm_logger (
         end
     end
 
+    // =========================================================================
+    // 5.5 SYNCHRONIZATOR DOMENY WIDEO (CDC: 100 MHz -> 65 MHz)
+    // Zabezpieczamy pamięć logów przed uderzeniem w niestabilną sieć VGA
+    // =========================================================================
+    logic [199:0] log_strings_vga_sync [0:7]; 
+    logic [3:0]   num_logs_vga_sync;
+    
+    always_ff @(posedge clk_65MHz or negedge rst_n) begin
+        if (!rst_n) begin
+            num_logs_vga_sync <= 4'd0;
+            for (int i=0; i<8; i++) log_strings_vga_sync[i] <= 200'd0;
+        end else begin
+            // UWAGA: To jest transfer wielobitowy (Bus CDC). 
+            // Ponieważ logi dla oka zmieniają się ekstremalnie rzadko, 
+            // można bezpiecznie użyć pojedynczego rejestru w nowym zegarze.
+            num_logs_vga_sync <= num_logs;
+            for (int i=0; i<8; i++) log_strings_vga_sync[i] <= log_strings_mem[i];
+        end
+    end
+
     // --- 6. SPRZĘTOWE RENDEROWANIE DO EKRANU ---
     logic [7:0] row_pixels;
     
@@ -168,13 +171,15 @@ module alarm_logger (
                         (show_monitor && k < 2) ? (12'd590 + k * 12'd50) :    
                         12'd0;
             
-            assign ren = (k < num_logs) && (show_history || (show_monitor && k < 2));
+            // Zmiana na zsynchronizowaną zmienną!
+            assign ren = (k < num_logs_vga_sync) && (show_history || (show_monitor && k < 2));
 
             vga_text_renderer #(.MAX_CHARS(25), .CHAR_SCALE(2)) txt_log (
                 .clk(clk_65MHz),
                 .hcount(hcount), .vcount(vcount),
                 .pos_x(rx), .pos_y(ry),
-                .char_string(log_strings_mem[k]),
+                // Zmiana na zsynchronizowaną zmienną!
+                .char_string(log_strings_vga_sync[k]),
                 .string_len(ren ? 5'd25 : 5'd0), 
                 .pixel_on(row_pixels[k])
             );
