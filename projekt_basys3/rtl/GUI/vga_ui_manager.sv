@@ -69,7 +69,6 @@ module vga_ui_manager (
         .rtc_minutes(rtc_minutes),
         .rtc_seconds(rtc_seconds), 
         .current_bpm(current_bpm), 
-        .bpm_valid(bpm_valid),
         .current_bpm_instant(current_bpm_instant),
         .bpm_instant_valid(bpm_instant_valid),
         .suppress_rhythm_alarms(1'b0),
@@ -82,10 +81,60 @@ module vga_ui_manager (
         .stemi_alarm(stemi_alarm)
     );
 
+    // --- SYNCHRONIZACJA SYGNAŁÓW DLA DOMENY WIDEO (CDC 100MHz -> 65MHz) ---
+    logic [7:0] current_bpm_sync;
+    logic [7:0] current_bpm_instant_sync;
+
+    // Zmienne zsynchronizowane dla RTC (Zegara)
+    logic [4:0] rtc_hours_sync; 
+    logic [5:0] rtc_minutes_sync; 
+    logic [5:0] rtc_seconds_sync;
+    logic [4:0] rtc_days_sync;  
+    logic [3:0] rtc_months_sync;
+
+    // Zmienne zsynchronizowane dla Myszki do obsługi UI
+    logic [11:0] mouse_x_sync;
+    logic [11:0] mouse_y_sync;
+    logic        mouse_left_sync1, mouse_left_sync2;
+    logic        mouse_click_pulse;
+
+    always_ff @(posedge clk_65MHz or negedge rst_n) begin
+        if (!rst_n) begin
+            current_bpm_sync <= 8'd0;
+            current_bpm_instant_sync <= 8'd0;
+            
+            rtc_hours_sync <= 5'd0; rtc_minutes_sync <= 6'd0; rtc_seconds_sync <= 6'd0;
+            rtc_days_sync <= 5'd0; rtc_months_sync <= 4'd0;
+            
+            mouse_x_sync <= 12'd0; mouse_y_sync <= 12'd0;
+            mouse_left_sync1 <= 1'b0; mouse_left_sync2 <= 1'b0;
+        end else begin
+            // Łapiemy BPM
+            current_bpm_sync <= current_bpm;
+            current_bpm_instant_sync <= current_bpm_instant;
+            
+            // Łapiemy czas z modułu rtc_clock (100 MHz)
+            rtc_hours_sync   <= rtc_hours;
+            rtc_minutes_sync <= rtc_minutes;
+            rtc_seconds_sync <= rtc_seconds;
+            rtc_days_sync    <= rtc_days;
+            rtc_months_sync  <= rtc_months;
+            
+            // Łapiemy myszkę (X, Y oraz kliknięcie)
+            mouse_x_sync <= mouse_x;
+            mouse_y_sync <= mouse_y;
+            mouse_left_sync1 <= mouse_left;
+            mouse_left_sync2 <= mouse_left_sync1; // Podwójny rejestr dla przycisku!
+        end
+    end
+
+    // Detekcja pojedynczego kliknięcia myszką (żeby nie klikało 60 razy na sekundę)
+    assign mouse_click_pulse = mouse_left_sync1 && !mouse_left_sync2;
+
     logic [11:0] bpm_rgb;
     vga_bpm_display u_bpm_text (
         .clk_65MHz(clk_65MHz), .rst_n(rst_n), 
-        .bpm(current_bpm), .bpm_valid(bpm_valid), 
+        .bpm(current_bpm_sync), .bpm_valid(bpm_valid), 
         .hcount(vga_in.hcount), .vcount(vga_in.vcount),
         .leads_off(leads_off), 
         .rgb_out(bpm_rgb)
@@ -99,7 +148,7 @@ module vga_ui_manager (
         .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
         .pos_x(12'd30), .pos_y(12'd15),
         .char_string(8'h4D), // "M"
-        .string_len(4'd1), .pixel_on(txt_header_M)
+        .string_len(5'd1), .pixel_on(txt_header_M)
     );
 
     // Reszta tytułu odsunięta o 3 piksele w prawo
@@ -107,7 +156,7 @@ module vga_ui_manager (
         .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
         .pos_x(12'd49), .pos_y(12'd15),
         .char_string(80'h4F4E49544F5220454B47), // "ONITOR EKG"
-        .string_len(4'd10), .pixel_on(txt_header_ONITOR)
+        .string_len(5'd10), .pixel_on(txt_header_ONITOR)
     );
 
     // Tekst na głównym przycisku dole (START / HISTORIA / POWROT)
@@ -123,7 +172,7 @@ module vga_ui_manager (
         .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
         .pos_x((current_state == STATE_SETUP) ? 12'd475 : 12'd835), 
         .pos_y((current_state == STATE_SETUP) ? 12'd422 : 12'd627),
-        .char_string(btn_string), .string_len(4'd10), .pixel_on(txt_btn1)
+        .char_string(btn_string), .string_len(5'd10), .pixel_on(txt_btn1)
     );
 
     // Nowy przycisk USTAWIENIA (tylko na ekranach MONITOR i HISTORY)
@@ -132,7 +181,7 @@ module vga_ui_manager (
         .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
         .pos_x(12'd835), .pos_y(12'd547), // Wyśrodkowane w nowym polu
         .char_string(80'h555354415749454E4941), // "USTAWIENIA"
-        .string_len((current_state != STATE_SETUP) ? 4'd10 : 4'd0), 
+        .string_len((current_state != STATE_SETUP) ? 5'd10 : 5'd0), 
         .pixel_on(txt_btn_settings)
     );
 
@@ -141,11 +190,11 @@ module vga_ui_manager (
     logic [7:0] t_h1, t_h2, t_m1, t_m2, t_s1, t_s2, t_d1, t_d2, t_mo1, t_mo2;
     logic [119:0] top_clock_str; // 15 znaków
     
-    assign t_h1 = (rtc_hours / 10) + 8'h30;   assign t_h2 = (rtc_hours % 10) + 8'h30;
-    assign t_m1 = (rtc_minutes / 10) + 8'h30; assign t_m2 = (rtc_minutes % 10) + 8'h30;
-    assign t_s1 = (rtc_seconds / 10) + 8'h30; assign t_s2 = (rtc_seconds % 10) + 8'h30;
-    assign t_d1 = (rtc_days / 10) + 8'h30;    assign t_d2 = (rtc_days % 10) + 8'h30;
-    assign t_mo1 = (rtc_months / 10) + 8'h30; assign t_mo2 = (rtc_months % 10) + 8'h30;
+    assign t_h1 = (rtc_hours_sync / 10) + 8'h30;   assign t_h2 = (rtc_hours_sync % 10) + 8'h30;
+    assign t_m1 = (rtc_minutes_sync / 10) + 8'h30; assign t_m2 = (rtc_minutes_sync % 10) + 8'h30;
+    assign t_s1 = (rtc_seconds_sync / 10) + 8'h30; assign t_s2 = (rtc_seconds_sync % 10) + 8'h30;
+    assign t_d1 = (rtc_days_sync / 10) + 8'h30;    assign t_d2 = (rtc_days_sync % 10) + 8'h30;
+    assign t_mo1 = (rtc_months_sync / 10) + 8'h30; assign t_mo2 = (rtc_months_sync % 10) + 8'h30;
 
     // Format: "HH:MM:SS  DD.MM"
     assign top_clock_str = {t_h1, t_h2, 8'h3A, t_m1, t_m2, 8'h3A, t_s1, t_s2, 8'h20, 8'h20, t_d1, t_d2, 8'h2E, t_mo1, t_mo2};
@@ -153,7 +202,7 @@ module vga_ui_manager (
     vga_text_renderer #(.MAX_CHARS(15), .CHAR_SCALE(2)) t_top_clock (
         .clk(clk_65MHz), .hcount(vga_in.hcount), .vcount(vga_in.vcount),
         .pos_x(12'd730), .pos_y(12'd15),
-        .char_string(top_clock_str), .string_len(4'd15), .pixel_on(txt_top_clock)
+        .char_string(top_clock_str), .string_len(5'd15), .pixel_on(txt_top_clock)
     );
 
     // --- CYFROWE WYŚWIETLACZE DLA EKRANU SETUP (Zostawione duże 7-segmentowe) ---
@@ -164,17 +213,17 @@ module vga_ui_manager (
     logic setup_time_p [3:0]; logic setup_time_pixel;
     logic setup_date_p [3:0]; logic setup_date_pixel;
 
-    vga_7seg_digit #(.POS_X(360), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sh0 (.digit_val(setup_hour/10), .* , .pixel_on(setup_time_p[0]));
-    vga_7seg_digit #(.POS_X(390), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sh1 (.digit_val(setup_hour%10), .* , .pixel_on(setup_time_p[1]));
-    vga_7seg_digit #(.POS_X(440), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sm0 (.digit_val(setup_min/10), .* , .pixel_on(setup_time_p[2]));
-    vga_7seg_digit #(.POS_X(470), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sm1 (.digit_val(setup_min%10), .* , .pixel_on(setup_time_p[3]));
+    vga_7seg_digit #(.POS_X(360), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sh0 (.digit_val(4'(setup_hour/10)), .* , .pixel_on(setup_time_p[0]));
+    vga_7seg_digit #(.POS_X(390), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sh1 (.digit_val(4'(setup_hour%10)), .* , .pixel_on(setup_time_p[1]));
+    vga_7seg_digit #(.POS_X(440), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sm0 (.digit_val(4'(setup_min/10)), .* , .pixel_on(setup_time_p[2]));
+    vga_7seg_digit #(.POS_X(470), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sm1 (.digit_val(4'(setup_min%10)), .* , .pixel_on(setup_time_p[3]));
     logic setup_colon = (vga_in.hcount >= 421 && vga_in.hcount <= 425 && ((vga_in.vcount >= 290 && vga_in.vcount <= 294) || (vga_in.vcount >= 310 && vga_in.vcount <= 314)));
     assign setup_time_pixel = (current_state == STATE_SETUP) && (setup_time_p[0] | setup_time_p[1] | setup_time_p[2] | setup_time_p[3] | setup_colon);
 
-    vga_7seg_digit #(.POS_X(540), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sd0 (.digit_val(setup_day/10), .* , .pixel_on(setup_date_p[0]));
-    vga_7seg_digit #(.POS_X(570), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sd1 (.digit_val(setup_day%10), .* , .pixel_on(setup_date_p[1]));
-    vga_7seg_digit #(.POS_X(620), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) s_mo0 (.digit_val(setup_mon/10), .* , .pixel_on(setup_date_p[2]));
-    vga_7seg_digit #(.POS_X(650), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) s_mo1 (.digit_val(setup_mon%10), .* , .pixel_on(setup_date_p[3]));
+    vga_7seg_digit #(.POS_X(540), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sd0 (.digit_val(4'(setup_day/10)), .* , .pixel_on(setup_date_p[0]));
+    vga_7seg_digit #(.POS_X(570), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) sd1 (.digit_val(4'(setup_day%10)), .* , .pixel_on(setup_date_p[1]));
+    vga_7seg_digit #(.POS_X(620), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) s_mo0 (.digit_val(4'(setup_mon/10)), .* , .pixel_on(setup_date_p[2]));
+    vga_7seg_digit #(.POS_X(650), .POS_Y(280), .WIDTH(22), .HEIGHT(46), .THICKNESS(4)) s_mo1 (.digit_val(4'(setup_mon%10)), .* , .pixel_on(setup_date_p[3]));
     logic setup_dot = (vga_in.hcount >= 601 && vga_in.hcount <= 605 && vga_in.vcount >= 322 && vga_in.vcount <= 326);
     assign setup_date_pixel = (current_state == STATE_SETUP) && (setup_date_p[0] | setup_date_p[1] | setup_date_p[2] | setup_date_p[3] | setup_dot);
 
@@ -208,42 +257,43 @@ module vga_ui_manager (
     // --- LOGIKA KLIKNIĘĆ (W ZEGARZE 65 MHz) ---
     always_ff @(posedge clk_65MHz or negedge rst_n) begin
         if (!rst_n) begin
-            current_state <= STATE_SETUP; prev_mouse_left <= 1'b0;
+            current_state <= STATE_SETUP; 
             setup_hour <= 5'd12; setup_min <= 6'd00;
             setup_day <= 5'd15; setup_mon <= 4'd06;
             do_set_time <= 1'b0;
         end else begin
-            prev_mouse_left <= mouse_left;
             do_set_time <= 1'b0; 
 
-            if (mouse_click) begin
+            // Używamy naszego zsynchronizowanego impulsu
+            if (mouse_click_pulse) begin
                 case (current_state)
                     STATE_SETUP: begin
-                        if (mouse_x > 400 && mouse_x < 624 && mouse_y > 400 && mouse_y < 460) begin
+                        // Używamy zsynchronizowanych współrzędnych X i Y
+                        if (mouse_x_sync > 400 && mouse_x_sync < 624 && mouse_y_sync > 400 && mouse_y_sync < 460) begin
                             current_state <= STATE_MONITOR; do_set_time <= 1'b1;
                         end
-                        if (mouse_y >= 200 && mouse_y < 240) begin
-                            if (mouse_x >= 360 && mouse_x < 410) setup_hour <= (setup_hour == 5'd23) ? 5'd0 : setup_hour + 1'b1;
-                            if (mouse_x >= 440 && mouse_x < 490) setup_min  <= (setup_min == 6'd59) ? 6'd0 : setup_min + 1'b1;
-                            if (mouse_x >= 540 && mouse_x < 590) setup_day  <= (setup_day == 5'd31) ? 5'd1 : setup_day + 1'b1;
-                            if (mouse_x >= 620 && mouse_x < 670) setup_mon  <= (setup_mon == 4'd12) ? 4'd1 : setup_mon + 1'b1;
+                        if (mouse_y_sync >= 200 && mouse_y_sync < 240) begin
+                            if (mouse_x_sync >= 360 && mouse_x_sync < 410) setup_hour <= (setup_hour == 5'd23) ? 5'd0 : setup_hour + 1'b1;
+                            if (mouse_x_sync >= 440 && mouse_x_sync < 490) setup_min  <= (setup_min == 6'd59) ? 6'd0 : setup_min + 1'b1;
+                            if (mouse_x_sync >= 540 && mouse_x_sync < 590) setup_day  <= (setup_day == 5'd31) ? 5'd1 : setup_day + 1'b1;
+                            if (mouse_x_sync >= 620 && mouse_x_sync < 670) setup_mon  <= (setup_mon == 4'd12) ? 4'd1 : setup_mon + 1'b1;
                         end
-                        if (mouse_y >= 350 && mouse_y < 390) begin
-                            if (mouse_x >= 360 && mouse_x < 410) setup_hour <= (setup_hour == 5'd0) ? 5'd23 : setup_hour - 1'b1;
-                            if (mouse_x >= 440 && mouse_x < 490) setup_min  <= (setup_min == 6'd0) ? 6'd59 : setup_min - 1'b1;
-                            if (mouse_x >= 540 && mouse_x < 590) setup_day  <= (setup_day == 5'd1) ? 5'd31 : setup_day - 1'b1;
-                            if (mouse_x >= 620 && mouse_x < 670) setup_mon  <= (setup_mon == 4'd1) ? 4'd12 : setup_mon - 1'b1;
+                        if (mouse_y_sync >= 350 && mouse_y_sync < 390) begin
+                            if (mouse_x_sync >= 360 && mouse_x_sync < 410) setup_hour <= (setup_hour == 5'd0) ? 5'd23 : setup_hour - 1'b1;
+                            if (mouse_x_sync >= 440 && mouse_x_sync < 490) setup_min  <= (setup_min == 6'd0) ? 6'd59 : setup_min - 1'b1;
+                            if (mouse_x_sync >= 540 && mouse_x_sync < 590) setup_day  <= (setup_day == 5'd1) ? 5'd31 : setup_day - 1'b1;
+                            if (mouse_x_sync >= 620 && mouse_x_sync < 670) setup_mon  <= (setup_mon == 4'd1) ? 4'd12 : setup_mon - 1'b1;
                         end
                     end
                     STATE_MONITOR: begin
-                        if (mouse_x > 800 && mouse_x < 950 && mouse_y > 600 && mouse_y < 670) current_state <= STATE_HISTORY;
+                        if (mouse_x_sync > 800 && mouse_x_sync < 950 && mouse_y_sync > 600 && mouse_y_sync < 670) current_state <= STATE_HISTORY;
                         // Nowy przycisk przejścia do SETUP
-                        if (mouse_x > 800 && mouse_x < 950 && mouse_y > 520 && mouse_y < 590) current_state <= STATE_SETUP;
+                        if (mouse_x_sync > 800 && mouse_x_sync < 950 && mouse_y_sync > 520 && mouse_y_sync < 590) current_state <= STATE_SETUP;
                     end
                     STATE_HISTORY: begin
-                        if (mouse_x > 800 && mouse_x < 950 && mouse_y > 600 && mouse_y < 670) current_state <= STATE_MONITOR;
+                        if (mouse_x_sync > 800 && mouse_x_sync < 950 && mouse_y_sync > 600 && mouse_y_sync < 670) current_state <= STATE_MONITOR;
                         // Nowy przycisk przejścia do SETUP
-                        if (mouse_x > 800 && mouse_x < 950 && mouse_y > 520 && mouse_y < 590) current_state <= STATE_SETUP;
+                        if (mouse_x_sync > 800 && mouse_x_sync < 950 && mouse_y_sync > 520 && mouse_y_sync < 590) current_state <= STATE_SETUP;
                     end
                 endcase
             end
