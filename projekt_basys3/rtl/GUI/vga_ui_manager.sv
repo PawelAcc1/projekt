@@ -83,7 +83,6 @@ module vga_ui_manager (
 
     // --- SYNCHRONIZACJA SYGNAŁÓW DLA DOMENY WIDEO (CDC 100MHz -> 65MHz) ---
     logic [7:0] current_bpm_sync;
-    logic [7:0] current_bpm_instant_sync;
 
     // Zmienne zsynchronizowane dla RTC (Zegara)
     logic [4:0] rtc_hours_sync; 
@@ -101,7 +100,6 @@ module vga_ui_manager (
     always_ff @(posedge clk_65MHz or negedge rst_n) begin
         if (!rst_n) begin
             current_bpm_sync <= 8'd0;
-            current_bpm_instant_sync <= 8'd0;
             
             rtc_hours_sync <= 5'd0; rtc_minutes_sync <= 6'd0; rtc_seconds_sync <= 6'd0;
             rtc_days_sync <= 5'd0; rtc_months_sync <= 4'd0;
@@ -111,7 +109,6 @@ module vga_ui_manager (
         end else begin
             // Łapiemy BPM
             current_bpm_sync <= current_bpm;
-            current_bpm_instant_sync <= current_bpm_instant;
             
             // Łapiemy czas z modułu rtc_clock (100 MHz)
             rtc_hours_sync   <= rtc_hours;
