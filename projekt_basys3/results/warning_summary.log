@@ -1,0 +1,72 @@
+Warnings, critical warnings and errors from synthesis and implementation
+
+Created: 2026-08-13 20:03:38
+
+----SYNTHESIS----
+WARNING: [Timing 38-316] Clock period '20.000' specified during out-of-context synthesis of instance 'u_top_ecg/u_blk_mem_arrhythmia' at clock pin 'clka' is different from the actual clock period '10.000', this can lead to different synthesis results.
+WARNING: [Timing 38-316] Clock period '20.000' specified during out-of-context synthesis of instance 'u_top_ecg/u_blk_mem_bradycardia' at clock pin 'clka' is different from the actual clock period '10.000', this can lead to different synthesis results.
+WARNING: [Timing 38-316] Clock period '20.000' specified during out-of-context synthesis of instance 'u_top_ecg/u_blk_mem_stemi' at clock pin 'clka' is different from the actual clock period '10.000', this can lead to different synthesis results.
+WARNING: [Timing 38-316] Clock period '20.000' specified during out-of-context synthesis of instance 'u_top_ecg/u_blk_mem_tachycardia' at clock pin 'clka' is different from the actual clock period '10.000', this can lead to different synthesis results.
+WARNING: [Synth 8-7129] Port char_string[119] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[111] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[103] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[95] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[87] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[79] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[71] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[63] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[55] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[47] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[39] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[31] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[23] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[15] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[7] in module vga_text_renderer__parameterized5 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[79] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[71] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[63] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[55] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[47] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[39] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[31] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[23] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[15] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[7] in module vga_text_renderer__parameterized4 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[79] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[71] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[63] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[55] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[47] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[39] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[31] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[23] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[15] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[7] in module vga_text_renderer__parameterized3 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[199] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[191] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[183] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[175] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[167] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[159] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[151] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[143] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[135] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[127] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[119] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[111] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[103] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[95] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[87] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[79] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[71] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[63] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[55] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[47] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[39] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[31] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[23] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[15] in module vga_text_renderer is either unconnected or has no load
+WARNING: [Synth 8-7129] Port char_string[7] in module vga_text_renderer is either unconnected or has no load
+
+----IMPLEMENTATION----
+WARNING: [Power 33-332] Found switching activity that implies high-fanout reset nets being asserted for excessive periods of time which may result in inaccurate power analysis.
